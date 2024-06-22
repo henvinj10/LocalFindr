@@ -1,0 +1,49 @@
+CREATE TABLE users (
+    email VARCHAR(255) PRIMARY KEY,
+    user_password VARCHAR(255) NOT NULL,
+    user_type VARCHAR(50) NOT NULL
+);
+SELECT * from users;
+
+CREATE TABLE address (
+	address_id SERIAL PRIMARY KEY,
+    email VARCHAR(255) NOT NULL,
+    building_Info VARCHAR(255),
+	street_name VARCHAR(255),
+	local_body VARCHAR(255),
+	city VARCHAR(255),
+	district VARCHAR(255),
+	state VARCHAR(255),
+	country VARCHAR(255),
+	g_map VARCHAR(255)
+);
+
+SELECT * FROM address;
+
+CREATE TABLE offerings (
+	offering_id SERIAL PRIMARY KEY,
+    email VARCHAR(255) NOT NULL,
+    offering_name VARCHAR(255) NOT NULL,
+	offering_type VARCHAR(255) NOT NULL,
+	category VARCHAR(255) NOT NULL,
+	description TEXT,
+	price DOUBLE PRECISION,
+	image BYTEA,
+	is_available BOOLEAN,
+	available_time VARCHAR(255)
+);
+
+SELECT * FROM offerings;
+
+CREATE TABLE wishlist (
+    wish_id SERIAL PRIMARY KEY,
+    email VARCHAR(255) NOT NULL,
+    offering_id SERIAL NOT NULL
+);
+
+SELECT * FROM wishlist;
+
+CREATE TABLE blacklist(
+	loged_out_token TEXT
+);
+SELECT * FROM blacklist;
