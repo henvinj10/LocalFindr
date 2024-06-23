@@ -7,15 +7,6 @@ import com.project.localfindr.model.DTO.RegisterResponseDTO;
 
 public class AuthorizationService {
 
-    /**
-     * For login feature
-     * @return JWT token
-     */
-    public String login(LoginDto loginDto) {
-        String username = loginDto.getEmail();
-        return "JWT Token"; //TODO: change to real token
-    }
-
     public RegisterResponseDTO registerUser(RegisterDTO registerDTO) {
         RegisterResponseDTO registerResponseDTO = new RegisterResponseDTO();
         return registerResponseDTO;
