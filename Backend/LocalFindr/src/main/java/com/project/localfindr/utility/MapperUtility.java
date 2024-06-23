@@ -21,8 +21,8 @@ public class MapperUtility {
 
         RegisterEntity registerEntity = new RegisterEntity();
         registerEntity.setEmail(registerDTO.getEmail());
-        registerEntity.setUser_password(passwordEncoder.encode(registerDTO.getPassword()));
-        registerEntity.setUser_type(registerDTO.getUserType());
+        registerEntity.setUserPassword(passwordEncoder.encode(registerDTO.getPassword()));
+        registerEntity.setUserType(registerDTO.getUserType());
 
         registerEntity.setAddressEntity(toAddressEntity(registerDTO.getAddressDTO()));
 
@@ -34,14 +34,14 @@ public class MapperUtility {
             return null;
         }
         AddressEntity addressEntity = new AddressEntity();
-        addressEntity.setBuilding_info(addressDTO.getBuildingInfo());
-        addressEntity.setStreet_name(addressDTO.getStreetName());
-        addressEntity.setLocal_body(addressDTO.getLocalBody());
+        addressEntity.setBuildingInfo(addressDTO.getBuildingInfo());
+        addressEntity.setStreetName(addressDTO.getStreetName());
+        addressEntity.setLocalBody(addressDTO.getLocalBody());
         addressEntity.setCity(addressDTO.getCity());
         addressEntity.setDistrict(addressDTO.getDistrict());
         addressEntity.setState(addressDTO.getState());
         addressEntity.setCountry(addressDTO.getCountry());
-        addressEntity.setG_map(addressDTO.getGMapLink());
+        addressEntity.setGMap(addressDTO.getGMapLink());
         return addressEntity;
     }
 

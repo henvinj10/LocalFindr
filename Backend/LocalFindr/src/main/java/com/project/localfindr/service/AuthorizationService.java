@@ -44,9 +44,9 @@ public class AuthorizationService {
         if(registerEntity == null){
             loginResponseDTO.setMessage("User not found");
             return  loginResponseDTO;
-        } else if(verifyPassword(loginDTO.getPassword(),registerEntity.getUser_password())) {
+        } else if(verifyPassword(loginDTO.getPassword(),registerEntity.getUserPassword())) {
             loginResponseDTO.setMessage("User logged in Successfully");
-            loginResponseDTO.setToken(JwtUtil.generateToken(registerEntity.getEmail(), registerEntity.getUser_type().name()));
+            loginResponseDTO.setToken(JwtUtil.generateToken(registerEntity.getEmail(), registerEntity.getUserType().name()));
             return  loginResponseDTO;
         }
         loginResponseDTO.setMessage("Password doesn't match");

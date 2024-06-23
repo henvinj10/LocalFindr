@@ -10,15 +10,15 @@ public class AddressEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int address_id;
-    private String building_info;
-    private String street_name;
-    private String local_body;
+    private int addressId;
+    private String buildingInfo;
+    private String streetName;
+    private String localBody;
     private String city;
     private String district;
     private String state;
     private String country;
-    private String g_map;
+    private String gMap;
 
     @OneToOne
     @JoinColumn(name = "email", referencedColumnName = "email")
