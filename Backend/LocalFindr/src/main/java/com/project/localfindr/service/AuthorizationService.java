@@ -12,7 +12,7 @@ public class AuthorizationService {
         return registerResponseDTO;
     }
 
-    public LoginResponseDTO authenticateUser(String email, String password) {
+    public LoginResponseDTO authenticateUser(LoginDto loginDto) {
         LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
         return loginResponseDTO;
     }
