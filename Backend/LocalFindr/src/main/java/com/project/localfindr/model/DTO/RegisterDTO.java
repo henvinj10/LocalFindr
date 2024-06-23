@@ -2,11 +2,12 @@ package com.project.localfindr.model.DTO;
 
 import com.project.localfindr.enumeration.UserType;
 import lombok.Data;
+import org.springframework.boot.autoconfigure.amqp.RabbitConnectionDetails;
 
 @Data
 public class RegisterDTO {
-    private String username;
+    private String email;
     private String password;
-    private String mobileNumber;
     private UserType userType;
+    private AddressDTO addressDTO;
 }
