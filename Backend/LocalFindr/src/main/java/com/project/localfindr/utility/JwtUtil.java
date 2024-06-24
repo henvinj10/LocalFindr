@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class JwtUtil {
 
-    private static final String SECRET_KEY = "TopSecretKey";
+    private static final String SECRET_KEY = "TopSecretKeyForLocalFindr";
     private static final long EXPIRATION_TIME = 86400000; // 1 day in milliseconds
 
     public static String generateToken(String email, String userType) {
