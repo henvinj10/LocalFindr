@@ -2,7 +2,7 @@ package com.project.localfindr.service;
 
 import com.project.localfindr.model.DTO.*;
 import com.project.localfindr.model.Entities.RegisterEntity;
-import com.project.localfindr.repository.RegisterRepository;
+import com.project.localfindr.repository.AuthorizationRepository;
 import com.project.localfindr.utility.JwtUtil;
 import com.project.localfindr.utility.MapperUtility;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 public class AuthorizationService {
 
     @Autowired
-    private RegisterRepository registerRepository;
+    private AuthorizationRepository authorizationRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -24,9 +24,9 @@ public class AuthorizationService {
     public RegisterResponseDTO registerUser(RegisterDTO registerDTO) {
         RegisterEntity registerEntity = mapperUtility.toRegisterEntity(registerDTO);
         RegisterResponseDTO registerResponseDTO = new RegisterResponseDTO();
-        RegisterEntity registerEntityCheck = registerRepository.findByEmail(registerEntity.getEmail());
+        RegisterEntity registerEntityCheck = authorizationRepository.findByEmail(registerEntity.getEmail());
         if( registerEntityCheck == null){
-            RegisterEntity registerEntityOut = registerRepository.save(registerEntity);
+            RegisterEntity registerEntityOut = authorizationRepository.save(registerEntity);
             if(registerEntityOut == registerEntity) {
                 registerResponseDTO.setMessage("User Registered Successfully");
                 return registerResponseDTO;
@@ -39,7 +39,7 @@ public class AuthorizationService {
     }
 
     public LoginResponseDTO authenticateUser(LoginDTO loginDTO) {
-        RegisterEntity registerEntity = registerRepository.findByEmail(loginDTO.getEmail());
+        RegisterEntity registerEntity = authorizationRepository.findByEmail(loginDTO.getEmail());
         LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
         if(registerEntity == null){
             loginResponseDTO.setMessage("User not found");
