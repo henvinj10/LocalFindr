@@ -1,11 +1,10 @@
 package com.project.localfindr.utility;
 
 import com.project.localfindr.model.DTO.AddressDTO;
+import com.project.localfindr.model.DTO.ProfileDTO;
 import com.project.localfindr.model.DTO.RegisterDTO;
 import com.project.localfindr.model.DTO.RegisterResponseDTO;
-import com.project.localfindr.model.Entities.AddressEntity;
-import com.project.localfindr.model.Entities.RegisterEntity;
-import com.project.localfindr.model.Entities.RegisterResponseEntity;
+import com.project.localfindr.model.Entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -52,5 +51,48 @@ public class MapperUtility {
         RegisterResponseDTO registerResponseDTO = new RegisterResponseDTO();
         registerResponseDTO.setMessage(registerResponseEntity.getMessage());
         return registerResponseDTO;
+    }
+
+    public ProfileDTO toProfileDto(ProfileEntity profileEntity) {
+        if (profileEntity == null){
+            return null;
+        }
+        ProfileDTO profileDTO = new ProfileDTO();
+        profileDTO.setEmail(profileEntity.getEmail());
+        profileDTO.setUserType(profileEntity.getUserType());
+        profileDTO.setAddressDTO(toAddressDTO(profileEntity.getProfileAddressEntity()));
+        return profileDTO;
+    }
+
+    private AddressDTO toAddressDTO(ProfileAddressEntity profileAddressEntity) {
+        if (profileAddressEntity == null){
+            return null;
+        }
+        AddressDTO addressDTO = new AddressDTO();
+        addressDTO.setBuildingInfo(profileAddressEntity.getBuildingInfo());
+        addressDTO.setStreetName(profileAddressEntity.getStreetName());
+        addressDTO.setLocalBody(profileAddressEntity.getLocalBody());
+        addressDTO.setCity(profileAddressEntity.getCity());
+        addressDTO.setDistrict(profileAddressEntity.getDistrict());
+        addressDTO.setState(profileAddressEntity.getState());
+        addressDTO.setCountry(profileAddressEntity.getCountry());
+        addressDTO.setGMapLink(profileAddressEntity.getGMap());
+        return addressDTO;
+    }
+
+    public UpdateProfileEntity toUpdateProfileEntity(AddressDTO addressDTO) {
+        if (addressDTO == null){
+            return null;
+        }
+        UpdateProfileEntity updateProfileEntity = new UpdateProfileEntity();
+        updateProfileEntity.setBuildingInfo(addressDTO.getBuildingInfo());
+        updateProfileEntity.setStreetName(addressDTO.getStreetName());
+        updateProfileEntity.setLocalBody(addressDTO.getLocalBody());
+        updateProfileEntity.setCity(addressDTO.getCity());
+        updateProfileEntity.setDistrict(addressDTO.getDistrict());
+        updateProfileEntity.setState(addressDTO.getState());
+        updateProfileEntity.setCountry(addressDTO.getCountry());
+        updateProfileEntity.setGMap(addressDTO.getGMapLink());
+        return updateProfileEntity;
     }
 }
