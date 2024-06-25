@@ -5,12 +5,13 @@ import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProfileUpdateRepository extends JpaRepository<UpdateProfileEntity, String> {
     @Transactional
     @Modifying
-    @Query("UPDATE address a SET a.email = :#{#updateProfileEntity.email}, a.building_info = :#{#updateProfileEntity.buildingInfo}, a.street_name = :#{#updateProfileEntity.streetName}, a.local_body = :#{#updateProfileEntity.localBody}, a.city = :#{#updateProfileEntity.city}, a.district = :#{#updateProfileEntity.district}, a.state = :#{#updateProfileEntity.state}, a.country = :#{#updateProfileEntity.country}, a.g_map = :#{#updateProfileEntity.gMap} WHERE a.email = :#{#updateProfileEntity.email}")
-    void updateProfileByEmail(UpdateProfileEntity updateProfileEntity);
+    @Query("UPDATE UpdateProfileEntity u SET u.buildingInfo = :#{#updateProfileEntity.buildingInfo}, u.streetName = :#{#updateProfileEntity.streetName}, u.localBody = :#{#updateProfileEntity.localBody}, u.city = :#{#updateProfileEntity.city}, u.district = :#{#updateProfileEntity.district}, u.state = :#{#updateProfileEntity.state}, u.country = :#{#updateProfileEntity.country}, u.gMap = :#{#updateProfileEntity.gMap} WHERE u.email = :#{#updateProfileEntity.email}")
+    void updateProfileByEmail(@Param("updateProfileEntity") UpdateProfileEntity updateProfileEntity);
 }
