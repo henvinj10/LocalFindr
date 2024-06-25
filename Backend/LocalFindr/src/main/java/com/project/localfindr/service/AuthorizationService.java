@@ -16,16 +16,21 @@ public class AuthorizationService {
     private AuthorizationRepository authorizationRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private MapperUtility mapperUtility;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    private MapperUtility mapperUtility;
+    public AuthorizationService(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public RegisterResponseDTO registerUser(RegisterDTO registerDTO) {
         RegisterEntity registerEntity = mapperUtility.toRegisterEntity(registerDTO);
         RegisterResponseDTO registerResponseDTO = new RegisterResponseDTO();
         RegisterEntity registerEntityCheck = authorizationRepository.findByEmail(registerEntity.getEmail());
         if( registerEntityCheck == null){
+            registerEntity.setUserPassword(encodePassword(registerEntity.getUserPassword()));
             RegisterEntity registerEntityOut = authorizationRepository.save(registerEntity);
             if(registerEntityOut == registerEntity) {
                 registerResponseDTO.setMessage("User Registered Successfully");
@@ -57,6 +62,10 @@ public class AuthorizationService {
         LogoutResponseDTO logoutResponseDTO = new LogoutResponseDTO();
         logoutResponseDTO.setMessage("Logout successful");
         return logoutResponseDTO;
+    }
+
+    private String encodePassword(String rawPassword) {
+        return passwordEncoder.encode(rawPassword);
     }
 
     private boolean verifyPassword(String rawPassword, String encodedPassword) {
