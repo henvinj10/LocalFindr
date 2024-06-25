@@ -9,7 +9,7 @@ public class AddressDTO {
     private String localBody;
     private String city;
     private String district;
-    private String State;
+    private String state;
     private String country;
     private String gMapLink;
 }
