@@ -36,12 +36,7 @@ public class CustomerService {
                 searchDTO.getCity()
         );
 
-        // Filter the offerings to only include available ones
-        List<OfferingEntity> availableOfferings = offerings.stream()
-                .filter(OfferingEntity::isAvailable)
-                .collect(Collectors.toList());
-
         // Map the offerings to SearchResponseDTO
-        return mapperUtility.toListSearchReponseDTO(availableOfferings);
+        return mapperUtility.toListSearchReponseDTO(offerings);
     }
 }
