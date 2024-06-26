@@ -15,9 +15,6 @@ import java.util.stream.Collectors;
 public class MapperUtility {
 
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
-
-    @Autowired
     private AddressRepository addressRepository;
 
     @Autowired
@@ -30,7 +27,6 @@ public class MapperUtility {
 
         RegisterEntity registerEntity = new RegisterEntity();
         registerEntity.setEmail(registerDTO.getEmail());
-        registerEntity.setUserPassword(passwordEncoder.encode(registerDTO.getPassword()));
         registerEntity.setUserType(registerDTO.getUserType());
 
         registerEntity.setAddressEntity(toAddressEntity(registerDTO.getAddressDTO()));
