@@ -13,10 +13,10 @@ import java.util.function.Function;
 @Component
 public class JwtUtil {
 
-    private static final String SECRET_KEY = "TopSecretKeyForLocalFindr";
+    private static final String SECRET_KEY = "mySecureKey";
     private static final long EXPIRATION_TIME = 86400000; // 1 day in milliseconds
 
-    public static String generateToken(String email, String userType) {
+    public String generateToken(String email, String userType) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", email);
         claims.put("userType", userType);

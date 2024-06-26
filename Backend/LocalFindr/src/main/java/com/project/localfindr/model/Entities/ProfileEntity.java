@@ -11,9 +11,11 @@ public class ProfileEntity {
 
     @Id
     private String email;
+    @Column(name = "user_password")
     private String userPassword;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "user_type")
     private UserType userType;
 
     @OneToOne(mappedBy = "profileEntity", cascade = CascadeType.ALL)

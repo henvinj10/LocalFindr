@@ -14,7 +14,7 @@ public class WishlistResponseDTO {
     private String category;
     private String description;
     private Double price;
-    private Image image;
+    private byte[] image;
     private Boolean isAvailable;
     private String availableTime;
     private AddressDTO addressDTO;

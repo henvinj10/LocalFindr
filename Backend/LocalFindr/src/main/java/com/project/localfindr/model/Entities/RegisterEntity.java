@@ -11,9 +11,11 @@ public class RegisterEntity {
 
     @Id
     private String email;
+    @Column(name = "user_password")
     private String userPassword;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "user_type")
     private UserType userType;
 
     @OneToOne(mappedBy = "registerEntity", cascade = CascadeType.ALL)

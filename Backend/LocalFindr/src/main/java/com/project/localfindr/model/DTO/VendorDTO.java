@@ -13,7 +13,7 @@ public class VendorDTO {
     String category;
     String description;
     double price;
-    Image image;
+    byte[] image;
     boolean isAvailable;
     OffsetDateTime availableTime;
 }

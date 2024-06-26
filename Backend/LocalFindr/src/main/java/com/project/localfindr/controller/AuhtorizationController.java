@@ -19,8 +19,8 @@ public class AuhtorizationController {
     }
 
     @PostMapping("/login")
-    public LoginResponseDTO authenticateUser(@RequestBody LoginDTO loginDto, HttpServletResponse response) {
-        LoginResponseDTO loginResponseDTO = authorizationService.authenticateUser(loginDto);
+    public LoginResponseDTO authenticateUser(@RequestBody LoginDTO loginDTO, HttpServletResponse response) {
+        LoginResponseDTO loginResponseDTO = authorizationService.authenticateUser(loginDTO);
         String jwtToken = loginResponseDTO.getToken();
         response.setHeader("Authorization", "Bearer " + jwtToken);
         return loginResponseDTO;
