@@ -7,6 +7,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
@@ -26,19 +29,21 @@ public class CustomAuthorizationFilter  extends OncePerRequestFilter {
 
         final String authorizationHeader = request.getHeader("Authorization");
 
-        String jwt = null;
-        String userType = null;
-
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            jwt = authorizationHeader.substring(7);
-            userType = jwtUtil.getUserTypeFromToken(jwt);
+            String jwt = authorizationHeader.substring(7);
+            String userType = jwtUtil.getUserTypeFromToken(jwt);
+
+            if (userType != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                // Assuming a method to validate the token
+                if (jwtUtil.validateToken(jwt)) {
+                    var authentication = new JwtAuthenticationToken(userType, new SimpleGrantedAuthority(userType));
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            }
         }
 
-        if (userType != null && userType.equals("CUSTOMER")) {
-            chain.doFilter(request, response);
-        } else {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
-        }
+        chain.doFilter(request, response);
     }
 
 }
