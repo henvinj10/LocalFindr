@@ -9,11 +9,22 @@ import lombok.Data;
 public class WishlistEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "wish_id")
     private int wishId;
     private String email;
-    private int offeringID;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offering_id", referencedColumnName = "offering_id")
-    private OfferingEntity offering;
+    private OfferingEntity offerings;
+
+    public Integer getOfferingID() {
+        return Math.toIntExact(offerings != null ? offerings.getOfferingID() : null);
+    }
+
+    public void setOfferingID(Integer offeringID) {
+        if (offerings == null) {
+            offerings = new OfferingEntity();
+        }
+        offerings.setOfferingID(Long.valueOf(offeringID));
+    }
 }

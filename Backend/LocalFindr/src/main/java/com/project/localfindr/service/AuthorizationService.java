@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
 public class AuthorizationService {
 
@@ -18,21 +20,22 @@ public class AuthorizationService {
     @Autowired
     private MapperUtility mapperUtility;
 
-    private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AuthorizationService(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
+    private JwtUtil jwtUtil;
+
 
     public RegisterResponseDTO registerUser(RegisterDTO registerDTO) {
         RegisterEntity registerEntity = mapperUtility.toRegisterEntity(registerDTO);
         RegisterResponseDTO registerResponseDTO = new RegisterResponseDTO();
         RegisterEntity registerEntityCheck = authorizationRepository.findByEmail(registerEntity.getEmail());
         if( registerEntityCheck == null){
-            registerEntity.setUserPassword(encodePassword(registerEntity.getUserPassword()));
+            String encodedPassword = encodePassword(registerDTO.getPassword());
+            registerEntity.setUserPassword(encodedPassword);
             RegisterEntity registerEntityOut = authorizationRepository.save(registerEntity);
-            if(registerEntityOut == registerEntity) {
+            if(Objects.equals(registerEntityOut.getEmail(), registerEntity.getEmail())) {
                 registerResponseDTO.setMessage("User Registered Successfully");
                 return registerResponseDTO;
             }
@@ -51,7 +54,7 @@ public class AuthorizationService {
             return  loginResponseDTO;
         } else if(verifyPassword(loginDTO.getPassword(),registerEntity.getUserPassword())) {
             loginResponseDTO.setMessage("User logged in Successfully");
-            loginResponseDTO.setToken(JwtUtil.generateToken(registerEntity.getEmail(), registerEntity.getUserType().name()));
+            loginResponseDTO.setToken(jwtUtil.generateToken(registerEntity.getEmail(), registerEntity.getUserType().name()));
             return  loginResponseDTO;
         }
         loginResponseDTO.setMessage("Password doesn't match");
@@ -69,6 +72,8 @@ public class AuthorizationService {
     }
 
     private boolean verifyPassword(String rawPassword, String encodedPassword) {
+        System.out.println("Raw Password: " + rawPassword);
+        System.out.println("Encoded Password: " + encodedPassword);
         return passwordEncoder.matches(rawPassword, encodedPassword);
     }
 }
