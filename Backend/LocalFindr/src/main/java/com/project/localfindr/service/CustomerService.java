@@ -1,9 +1,6 @@
 package com.project.localfindr.service;
 
-import com.project.localfindr.model.DTO.AddressDTO;
-import com.project.localfindr.model.DTO.SaveResponseDTO;
-import com.project.localfindr.model.DTO.SearchDTO;
-import com.project.localfindr.model.DTO.SearchResponseDTO;
+import com.project.localfindr.model.DTO.*;
 import com.project.localfindr.model.Entities.AddressEntity;
 import com.project.localfindr.model.Entities.OfferingEntity;
 import com.project.localfindr.model.Entities.WishlistEntity;
@@ -51,22 +48,32 @@ public class CustomerService {
     }
 
     public SaveResponseDTO save(int offeringID, HttpServletRequest request) {
+
+        WishlistEntity wishlistEntity = new WishlistEntity();
+        wishlistEntity.setOfferingID(offeringID);
+        wishlistEntity.setEmail(getEmail(request));
+        wishlistRepository.save(wishlistEntity);
+        SaveResponseDTO saveResponseDTO = new SaveResponseDTO();
+        saveResponseDTO.setMessage("Added to wishlist successfully");
+        return saveResponseDTO;
+    }
+
+    public DeleteResponseDTO delete(int offeringID, HttpServletRequest request) {
+
+        WishlistEntity wishlistEntity = new WishlistEntity();
+        wishlistEntity.setOfferingID(offeringID);
+        wishlistEntity.setEmail(getEmail(request));
+        wishlistRepository.delete(wishlistEntity);
+        DeleteResponseDTO deleteResponseDTO = new DeleteResponseDTO();
+        deleteResponseDTO.setMessage("Deleted from wishlist successfully");
+        return deleteResponseDTO;
+    }
+
+    private String getEmail(HttpServletRequest request){
         final String authorizationHeader = request.getHeader("Authorization");
-        String jwt = null;
-        String email = null;
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            jwt = authorizationHeader.substring(7);
-            email = jwtUtil.getEmailFromToken(jwt);
-            WishlistEntity wishlistEntity = new WishlistEntity();
-            wishlistEntity.setOfferingID(offeringID);
-            wishlistEntity.setEmail(email);
-            WishlistEntity wishlistEntityCheck = wishlistRepository.save(wishlistEntity);
-            if (wishlistEntityCheck != null){
-                SaveResponseDTO saveResponseDTO = new SaveResponseDTO();
-                saveResponseDTO.setMessage("Added to wishlist successfully");
-            }
-            throw new UnsupportedOperationException("Wishlist saving failed");
+            return jwtUtil.getEmailFromToken(authorizationHeader.substring(7));
         }
         throw new NullPointerException("Header is null");
     }
