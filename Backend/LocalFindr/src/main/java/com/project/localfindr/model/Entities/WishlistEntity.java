@@ -12,4 +12,8 @@ public class WishlistEntity {
     private int wishId;
     private String email;
     private int offeringID;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "offering_id", referencedColumnName = "offering_id")
+    private OfferingEntity offering;
 }
