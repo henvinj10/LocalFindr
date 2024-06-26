@@ -23,7 +23,8 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/auth/register").permitAll()
-                        .requestMatchers("/customer/**").authenticated()
+                        .requestMatchers("/customer/**").hasAuthority("CUSTOMER")
+                        .requestMatchers("/user/**").hasAuthority("VENDOR")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
