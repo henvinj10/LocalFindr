@@ -3,10 +3,13 @@ package com.project.localfindr.utility;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.stereotype.Component;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+@Component
 public class JwtUtil {
 
     private static final String SECRET_KEY = "TopSecretKeyForLocalFindr";
@@ -34,7 +37,7 @@ public class JwtUtil {
         return claims.getSubject();
     }
 
-    public static String getUserTypeFromToken(String token) {
+    public String getUserTypeFromToken(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(SECRET_KEY)
                 .parseClaimsJws(token)
