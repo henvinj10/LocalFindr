@@ -101,7 +101,7 @@ public class MapperUtility {
         return availableOfferings.stream()
                 .map(offering -> {
                     SearchResponseDTO responseDTO = new SearchResponseDTO();
-                    responseDTO.setOfferingID(offering.getOfferingID());
+                    responseDTO.setOfferingID(Math.toIntExact(offering.getOfferingID()));
                     responseDTO.setName(offering.getOfferingName());
                     responseDTO.setType(offering.getOfferingType());
                     responseDTO.setCategory(offering.getCategory());
@@ -134,9 +134,9 @@ public class MapperUtility {
                     WishlistResponseDTO responseDTO = new WishlistResponseDTO();
 
                     // Fetch offering details based on offeringID from wishlist
-                    OfferingEntity offeringEntity = offeringRepository.findById(wishlistItem.getOfferingID()).orElse(null);
+                    OfferingEntity offeringEntity = offeringRepository.findById((long) wishlistItem.getOfferingID()).orElse(null);
                     if (offeringEntity != null) {
-                        responseDTO.setOfferingID(offeringEntity.getOfferingID());
+                        responseDTO.setOfferingID(Math.toIntExact(offeringEntity.getOfferingID()));
                         responseDTO.setName(offeringEntity.getOfferingName());
                         responseDTO.setType(offeringEntity.getOfferingType());
                         responseDTO.setCategory(offeringEntity.getCategory());

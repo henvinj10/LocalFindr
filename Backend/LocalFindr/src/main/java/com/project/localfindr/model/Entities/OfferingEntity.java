@@ -14,15 +14,27 @@ import java.util.Set;
 public class OfferingEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int offeringID;
+    @Column(name = "offering_id")
+    private Long offeringID;
 
     private String email;
+    @Column(name = "offering_name")
     private String offeringName;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "offering_type")
     private OfferingType offeringType;
+
     private String category;
     private String description;
     private double price;
-    private Image image;
+    private byte[] image;
+    @Column(name = "is_available")
     private boolean isAvailable;
+    @Column(name = "available_time")
     private String availableTime;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "email", referencedColumnName = "email", insertable = false, updatable = false)
+    private AddressEntity address;
 }

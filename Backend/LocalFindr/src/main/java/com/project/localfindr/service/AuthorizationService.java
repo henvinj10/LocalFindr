@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
 public class AuthorizationService {
 
@@ -20,7 +22,6 @@ public class AuthorizationService {
 
     private final PasswordEncoder passwordEncoder;
 
-    @Autowired
     public AuthorizationService(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
@@ -30,9 +31,10 @@ public class AuthorizationService {
         RegisterResponseDTO registerResponseDTO = new RegisterResponseDTO();
         RegisterEntity registerEntityCheck = authorizationRepository.findByEmail(registerEntity.getEmail());
         if( registerEntityCheck == null){
-            registerEntity.setUserPassword(encodePassword(registerEntity.getUserPassword()));
+            String encodedPassword = encodePassword(registerEntity.getUserPassword());
+            registerEntity.setUserPassword(encodedPassword);
             RegisterEntity registerEntityOut = authorizationRepository.save(registerEntity);
-            if(registerEntityOut == registerEntity) {
+            if(Objects.equals(registerEntityOut.getEmail(), registerEntity.getEmail())) {
                 registerResponseDTO.setMessage("User Registered Successfully");
                 return registerResponseDTO;
             }
