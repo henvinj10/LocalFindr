@@ -167,4 +167,44 @@ public class MapperUtility {
                 })
                 .collect(Collectors.toList());
     }
+
+
+    public OfferingEntity toOfferingEntity(VendorDTO vendorDTO, String username) {
+
+        if(vendorDTO == null)
+        {
+            return null;
+        }
+        OfferingEntity offeringEntity = new OfferingEntity();
+        offeringEntity.setOfferingID(vendorDTO.getOfferingID());
+        offeringEntity.setEmail(username);
+        offeringEntity.setOfferingName(vendorDTO.getName());
+        offeringEntity.setOfferingType(vendorDTO.getType());
+        offeringEntity.setCategory(vendorDTO.getCategory());
+        offeringEntity.setDescription(vendorDTO.getDescription());
+        offeringEntity.setPrice(vendorDTO.getPrice());
+        offeringEntity.setImage(vendorDTO.getImage());
+        offeringEntity.setAvailable(vendorDTO.isAvailable());
+        offeringEntity.setAvailableTime(vendorDTO.getAvailableTime());
+        return offeringEntity;
+    }
+    public OfferingEntity toOfferingREntity(VendorRegisterDTO vendorRegisterDTO, String username) {
+
+        if(vendorRegisterDTO == null)
+        {
+            return null;
+        }
+        OfferingEntity offeringEntity = new OfferingEntity();
+        offeringEntity.setEmail(username);
+        offeringEntity.setOfferingName(vendorRegisterDTO.getName());
+        offeringEntity.setOfferingType(vendorRegisterDTO.getType());
+        offeringEntity.setCategory(vendorRegisterDTO.getCategory());
+        offeringEntity.setDescription(vendorRegisterDTO.getDescription());
+        offeringEntity.setPrice(vendorRegisterDTO.getPrice());
+        offeringEntity.setImage(vendorRegisterDTO.getImage());
+        offeringEntity.setAvailable(vendorRegisterDTO.isAvailable());
+        offeringEntity.setAvailableTime(vendorRegisterDTO.getAvailableTime());
+        return offeringEntity;
+    }
+
 }

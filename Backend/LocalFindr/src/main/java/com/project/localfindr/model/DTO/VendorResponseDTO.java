@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class VendorResponseDTO {
     String message;
-    String offeringId;
+    Integer offeringId;
 }

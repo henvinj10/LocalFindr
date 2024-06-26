@@ -4,16 +4,16 @@ import com.project.localfindr.enumeration.OfferingType;
 import lombok.Data;
 
 import java.awt.*;
-import java.time.OffsetDateTime;
-
+// Same as offering entity
 @Data
 public class VendorDTO {
-    String name;
-    OfferingType type;
-    String category;
-    String description;
-    double price;
-    Image image;
-    boolean isAvailable;
-    OffsetDateTime availableTime;
+    private int offeringID;
+    private String name;
+    private OfferingType type;
+    private String category;
+    private String description;
+    private double price;
+    private Image image;
+    private boolean isAvailable;
+    private String availableTime;
 }
