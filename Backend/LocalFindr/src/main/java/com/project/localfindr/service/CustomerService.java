@@ -69,6 +69,12 @@ public class CustomerService {
         return deleteResponseDTO;
     }
 
+    public List<WishlistResponseDTO> getWishlist(HttpServletRequest request) {
+        String email =getEmail(request);
+        List<WishlistEntity> wishlistItems = wishlistRepository.findByEmail(email);
+        return mapperUtility.toListWishListResponseDTO(wishlistItems);
+    }
+
     private String getEmail(HttpServletRequest request){
         final String authorizationHeader = request.getHeader("Authorization");
 
@@ -77,4 +83,6 @@ public class CustomerService {
         }
         throw new NullPointerException("Header is null");
     }
+
+
 }

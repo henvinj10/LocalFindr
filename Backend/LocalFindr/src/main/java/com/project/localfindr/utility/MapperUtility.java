@@ -3,6 +3,7 @@ package com.project.localfindr.utility;
 import com.project.localfindr.model.DTO.*;
 import com.project.localfindr.model.Entities.*;
 import com.project.localfindr.repository.AddressRepository;
+import com.project.localfindr.repository.OfferingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,9 @@ public class MapperUtility {
 
     @Autowired
     private AddressRepository addressRepository;
+
+    @Autowired
+    private OfferingRepository offeringRepository;
 
     public RegisterEntity toRegisterEntity(RegisterDTO registerDTO) {
         if (registerDTO == null) {
@@ -119,6 +123,46 @@ public class MapperUtility {
                     addressDTO.setGMapLink(address.getGMap());
 
                     responseDTO.setAddressDTO(addressDTO);
+                    return responseDTO;
+                })
+                .collect(Collectors.toList());
+    }
+
+    public List<WishlistResponseDTO> toListWishListResponseDTO(List<WishlistEntity> wishlistItems) {
+       return wishlistItems.stream()
+                .map(wishlistItem -> {
+                    WishlistResponseDTO responseDTO = new WishlistResponseDTO();
+
+                    // Fetch offering details based on offeringID from wishlist
+                    OfferingEntity offeringEntity = offeringRepository.findById(wishlistItem.getOfferingID()).orElse(null);
+                    if (offeringEntity != null) {
+                        responseDTO.setOfferingID(offeringEntity.getOfferingID());
+                        responseDTO.setName(offeringEntity.getOfferingName());
+                        responseDTO.setType(offeringEntity.getOfferingType());
+                        responseDTO.setCategory(offeringEntity.getCategory());
+                        responseDTO.setDescription(offeringEntity.getDescription());
+                        responseDTO.setPrice(offeringEntity.getPrice());
+                        responseDTO.setImage(offeringEntity.getImage());
+                        responseDTO.setIsAvailable(offeringEntity.isAvailable());
+                        responseDTO.setAvailableTime(offeringEntity.getAvailableTime());
+
+                        // Fetch address details associated with offering
+                        AddressEntity addressEntity = addressRepository.findByRegisterEntityEmail(offeringEntity.getEmail());
+                        if (addressEntity != null) {
+                            AddressDTO addressDTO = new AddressDTO();
+                            addressDTO.setBuildingInfo(addressEntity.getBuildingInfo());
+                            addressDTO.setStreetName(addressEntity.getStreetName());
+                            addressDTO.setLocalBody(addressEntity.getLocalBody());
+                            addressDTO.setCity(addressEntity.getCity());
+                            addressDTO.setDistrict(addressEntity.getDistrict());
+                            addressDTO.setState(addressEntity.getState());
+                            addressDTO.setCountry(addressEntity.getCountry());
+                            addressDTO.setGMapLink(addressEntity.getGMap());
+
+                            responseDTO.setAddressDTO(addressDTO);
+                        }
+                    }
+
                     return responseDTO;
                 })
                 .collect(Collectors.toList());

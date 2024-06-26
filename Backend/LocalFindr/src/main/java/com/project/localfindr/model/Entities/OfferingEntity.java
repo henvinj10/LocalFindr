@@ -6,6 +6,7 @@ import lombok.Data;
 import org.springframework.boot.autoconfigure.amqp.RabbitConnectionDetails;
 
 import java.awt.*;
+import java.util.Set;
 
 @Data
 @Entity
@@ -24,8 +25,4 @@ public class OfferingEntity {
     private Image image;
     private boolean isAvailable;
     private String availableTime;
-
-    @ManyToOne
-    @JoinColumn(name = "email", referencedColumnName = "email", insertable = false, updatable = false)
-    private RabbitConnectionDetails.Address address;
 }
