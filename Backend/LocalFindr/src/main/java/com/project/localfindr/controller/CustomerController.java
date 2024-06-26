@@ -1,5 +1,6 @@
 package com.project.localfindr.controller;
 
+import com.project.localfindr.model.DTO.DeleteResponseDTO;
 import com.project.localfindr.model.DTO.SaveResponseDTO;
 import com.project.localfindr.model.DTO.SearchDTO;
 import com.project.localfindr.model.DTO.SearchResponseDTO;
@@ -25,5 +26,10 @@ public class CustomerController {
     @PostMapping("/save/{offeringID}")
     public SaveResponseDTO save(@PathVariable int offeringID, HttpServletRequest request){
         return customerService.save(offeringID, request);
+    }
+
+    @DeleteMapping("/delete/{offeringID}")
+    public DeleteResponseDTO delete(@PathVariable int offeringID, HttpServletRequest request){
+        return customerService.delete(offeringID, request);
     }
 }
