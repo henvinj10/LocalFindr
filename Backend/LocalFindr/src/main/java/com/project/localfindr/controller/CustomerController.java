@@ -1,5 +1,6 @@
 package com.project.localfindr.controller;
 
+import com.project.localfindr.model.DTO.SaveResponseDTO;
 import com.project.localfindr.model.DTO.SearchDTO;
 import com.project.localfindr.model.DTO.SearchResponseDTO;
 import com.project.localfindr.service.CustomerService;
@@ -19,5 +20,10 @@ public class CustomerController {
     @GetMapping("/search")
     public List<SearchResponseDTO> search(@RequestBody SearchDTO searchDTO, HttpServletRequest request) {
         return customerService.search(request, searchDTO);
+    }
+
+    @PostMapping("/save/{offeringID}")
+    public SaveResponseDTO save(@PathVariable int offeringID, HttpServletRequest request){
+        return customerService.save(offeringID, request);
     }
 }

@@ -25,11 +25,14 @@ public class UserService {
     private MapperUtility mapperUtility;
 
     @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
     private ProfileUpdateRepository profileUpdateRepository;
 
     public ProfileDTO getUserProfile(HttpServletRequest request) {
         String jwtToken = extractJwtFromRequest(request);
-        String email = JwtUtil.getEmailFromToken(jwtToken);
+        String email = jwtUtil.getEmailFromToken(jwtToken);
         ProfileEntity profileEntity = userRepository.findByEmail(email);
         if (profileEntity != null) {
             return mapperUtility.toProfileDto(profileEntity);
@@ -39,7 +42,7 @@ public class UserService {
 
     public ProfileDTO updateUserProfile(HttpServletRequest request, AddressDTO addressDTO) {
         String jwtToken = extractJwtFromRequest(request);
-        String email = JwtUtil.getEmailFromToken(jwtToken);
+        String email = jwtUtil.getEmailFromToken(jwtToken);
         ProfileEntity profileEntity = userRepository.findByEmail(email);
         if (profileEntity != null) {
             UpdateProfileEntity updateProfileEntity = mapperUtility.toUpdateProfileEntity(addressDTO);
