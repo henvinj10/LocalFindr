@@ -7,7 +7,9 @@ import com.project.localfindr.model.DTO.RegisterResponseDTO;
 import com.project.localfindr.model.Entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Component;
 
+@Component
 public class MapperUtility {
 
     @Autowired
@@ -42,15 +44,6 @@ public class MapperUtility {
         addressEntity.setCountry(addressDTO.getCountry());
         addressEntity.setGMap(addressDTO.getGMapLink());
         return addressEntity;
-    }
-
-    public RegisterResponseDTO toRegisterResponseDTO(RegisterResponseEntity registerResponseEntity) {
-        if (registerResponseEntity == null){
-            return null;
-        }
-        RegisterResponseDTO registerResponseDTO = new RegisterResponseDTO();
-        registerResponseDTO.setMessage(registerResponseEntity.getMessage());
-        return registerResponseDTO;
     }
 
     public ProfileDTO toProfileDto(ProfileEntity profileEntity) {

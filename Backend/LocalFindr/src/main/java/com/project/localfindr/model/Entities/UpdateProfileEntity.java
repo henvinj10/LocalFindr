@@ -7,6 +7,9 @@ import lombok.Data;
 @Entity
 @Table(name = "address")
 public class UpdateProfileEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private String addressId;
     private String email;
     private String buildingInfo;
     private String streetName;

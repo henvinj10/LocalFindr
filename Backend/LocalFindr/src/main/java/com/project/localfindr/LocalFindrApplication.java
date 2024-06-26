@@ -16,5 +16,4 @@ public class LocalFindrApplication extends SpringBootServletInitializer {
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
 		return application.sources(LocalFindrApplication.class);
 	}
-
 }
