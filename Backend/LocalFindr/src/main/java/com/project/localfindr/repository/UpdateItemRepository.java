@@ -13,11 +13,15 @@ public interface UpdateItemRepository extends JpaRepository<OfferingEntity, Long
 
     @Transactional
     @Modifying
-    @Query("UPDATE OfferingEntity o SET o.offeringName = :#{#offeringEntity.offeringName}, " +
-            "o.offeringType = :#{#offeringEntity.offeringType}, o.category = :#{#offeringEntity.category}, " +
-            "o.description = :#{#offeringEntity.description}, o.price = :#{#offeringEntity.price}, " +
-            "o.image = :#{#offeringEntity.image}, o.isAvailable = :#{#offeringEntity.isAvailable}, " +
-            "o.availableTime = :#{#offeringEntity.availableTime} " +
+    @Query("UPDATE OfferingEntity o SET " +
+            "o.offeringName = COALESCE(:#{#offeringEntity.offeringName}, o.offeringName), " +
+            "o.offeringType = COALESCE(:#{#offeringEntity.offeringType}, o.offeringType), " +
+            "o.category = COALESCE(:#{#offeringEntity.category}, o.category), " +
+            "o.description = COALESCE(:#{#offeringEntity.description}, o.description), " +
+            "o.price = COALESCE(:#{#offeringEntity.price}, o.price), " +
+            "o.image = COALESCE(:#{#offeringEntity.image}, o.image), " +
+            "o.isAvailable = COALESCE(:#{#offeringEntity.isAvailable}, o.isAvailable), " +
+            "o.availableTime = COALESCE(:#{#offeringEntity.availableTime}, o.availableTime) " +
             "WHERE o.email = :#{#offeringEntity.email} AND o.offeringID = :#{#offeringEntity.offeringID}")
     void updateItem(@Param("offeringEntity") OfferingEntity offeringEntity);
 }

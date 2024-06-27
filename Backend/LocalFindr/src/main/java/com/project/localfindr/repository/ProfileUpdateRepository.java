@@ -10,8 +10,18 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProfileUpdateRepository extends JpaRepository<UpdateProfileEntity, String> {
+
     @Transactional
     @Modifying
-    @Query("UPDATE UpdateProfileEntity u SET u.buildingInfo = :#{#updateProfileEntity.buildingInfo}, u.streetName = :#{#updateProfileEntity.streetName}, u.localBody = :#{#updateProfileEntity.localBody}, u.city = :#{#updateProfileEntity.city}, u.district = :#{#updateProfileEntity.district}, u.state = :#{#updateProfileEntity.state}, u.country = :#{#updateProfileEntity.country}, u.gMap = :#{#updateProfileEntity.gMap} WHERE u.email = :#{#updateProfileEntity.email}")
+    @Query("UPDATE UpdateProfileEntity u SET " +
+            "u.buildingInfo = COALESCE(:#{#updateProfileEntity.buildingInfo}, u.buildingInfo), " +
+            "u.streetName = COALESCE(:#{#updateProfileEntity.streetName}, u.streetName), " +
+            "u.localBody = COALESCE(:#{#updateProfileEntity.localBody}, u.localBody), " +
+            "u.city = COALESCE(:#{#updateProfileEntity.city}, u.city), " +
+            "u.district = COALESCE(:#{#updateProfileEntity.district}, u.district), " +
+            "u.state = COALESCE(:#{#updateProfileEntity.state}, u.state), " +
+            "u.country = COALESCE(:#{#updateProfileEntity.country}, u.country), " +
+            "u.gMap = COALESCE(:#{#updateProfileEntity.gMap}, u.gMap) " +
+            "WHERE u.email = :#{#updateProfileEntity.email}")
     void updateProfileByEmail(@Param("updateProfileEntity") UpdateProfileEntity updateProfileEntity);
 }
