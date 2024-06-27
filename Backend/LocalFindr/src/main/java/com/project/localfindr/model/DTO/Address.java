@@ -3,7 +3,7 @@ package com.project.localfindr.model.DTO;
 import lombok.Data;
 
 @Data
-public class AddressDTO {
+public class Address {
     private String buildingInfo;
     private String streetName;
     private String localBody;

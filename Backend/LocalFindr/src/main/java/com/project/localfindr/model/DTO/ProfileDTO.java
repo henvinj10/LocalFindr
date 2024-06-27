@@ -12,5 +12,5 @@ public class ProfileDTO {
     @Enumerated(EnumType.STRING)
     private UserType userType;
 
-    private AddressDTO addressDTO;
+    private Address address;
 }

@@ -1,6 +1,6 @@
 package com.project.localfindr.controller;
 
-import com.project.localfindr.model.DTO.AddressDTO;
+import com.project.localfindr.model.DTO.Address;
 import com.project.localfindr.model.DTO.ProfileDTO;
 import com.project.localfindr.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +20,7 @@ public class UsersController {
     }
 
     @PutMapping("/update")
-    public ProfileDTO updateProfile(@RequestBody AddressDTO addressDTO, HttpServletRequest request) {
-        return userService.updateUserProfile(request, addressDTO);
+    public ProfileDTO updateProfile(@RequestBody Address address, HttpServletRequest request) {
+        return userService.updateUserProfile(request, address);
     }
 }

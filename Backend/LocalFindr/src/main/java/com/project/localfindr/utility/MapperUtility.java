@@ -5,7 +5,6 @@ import com.project.localfindr.model.Entities.*;
 import com.project.localfindr.repository.AddressRepository;
 import com.project.localfindr.repository.OfferingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -29,24 +28,25 @@ public class MapperUtility {
         registerEntity.setEmail(registerDTO.getEmail());
         registerEntity.setUserType(registerDTO.getUserType());
 
-        registerEntity.setAddressEntity(toAddressEntity(registerDTO.getAddressDTO()));
+        registerEntity.setAddressEntity(toAddressEntity(registerDTO.getAddress()));
+        registerEntity.getAddressEntity().setRegisterEntity(registerEntity);
 
         return registerEntity;
     }
 
-    private AddressEntity toAddressEntity(AddressDTO addressDTO) {
-        if (addressDTO == null){
+    private AddressEntity toAddressEntity(Address address) {
+        if (address == null){
             return null;
         }
         AddressEntity addressEntity = new AddressEntity();
-        addressEntity.setBuildingInfo(addressDTO.getBuildingInfo());
-        addressEntity.setStreetName(addressDTO.getStreetName());
-        addressEntity.setLocalBody(addressDTO.getLocalBody());
-        addressEntity.setCity(addressDTO.getCity());
-        addressEntity.setDistrict(addressDTO.getDistrict());
-        addressEntity.setState(addressDTO.getState());
-        addressEntity.setCountry(addressDTO.getCountry());
-        addressEntity.setGMap(addressDTO.getGMapLink());
+        addressEntity.setBuildingInfo(address.getBuildingInfo());
+        addressEntity.setStreetName(address.getStreetName());
+        addressEntity.setLocalBody(address.getLocalBody());
+        addressEntity.setCity(address.getCity());
+        addressEntity.setDistrict(address.getDistrict());
+        addressEntity.setState(address.getState());
+        addressEntity.setCountry(address.getCountry());
+        addressEntity.setGMap(address.getGMapLink());
         return addressEntity;
     }
 
@@ -57,39 +57,39 @@ public class MapperUtility {
         ProfileDTO profileDTO = new ProfileDTO();
         profileDTO.setEmail(profileEntity.getEmail());
         profileDTO.setUserType(profileEntity.getUserType());
-        profileDTO.setAddressDTO(toAddressDTO(profileEntity.getProfileAddressEntity()));
+        profileDTO.setAddress(toAddressDTO(profileEntity.getProfileAddressEntity()));
         return profileDTO;
     }
 
-    private AddressDTO toAddressDTO(ProfileAddressEntity profileAddressEntity) {
+    private Address toAddressDTO(ProfileAddressEntity profileAddressEntity) {
         if (profileAddressEntity == null){
             return null;
         }
-        AddressDTO addressDTO = new AddressDTO();
-        addressDTO.setBuildingInfo(profileAddressEntity.getBuildingInfo());
-        addressDTO.setStreetName(profileAddressEntity.getStreetName());
-        addressDTO.setLocalBody(profileAddressEntity.getLocalBody());
-        addressDTO.setCity(profileAddressEntity.getCity());
-        addressDTO.setDistrict(profileAddressEntity.getDistrict());
-        addressDTO.setState(profileAddressEntity.getState());
-        addressDTO.setCountry(profileAddressEntity.getCountry());
-        addressDTO.setGMapLink(profileAddressEntity.getGMap());
-        return addressDTO;
+        Address address = new Address();
+        address.setBuildingInfo(profileAddressEntity.getBuildingInfo());
+        address.setStreetName(profileAddressEntity.getStreetName());
+        address.setLocalBody(profileAddressEntity.getLocalBody());
+        address.setCity(profileAddressEntity.getCity());
+        address.setDistrict(profileAddressEntity.getDistrict());
+        address.setState(profileAddressEntity.getState());
+        address.setCountry(profileAddressEntity.getCountry());
+        address.setGMapLink(profileAddressEntity.getGMap());
+        return address;
     }
 
-    public UpdateProfileEntity toUpdateProfileEntity(AddressDTO addressDTO) {
-        if (addressDTO == null){
+    public UpdateProfileEntity toUpdateProfileEntity(Address address) {
+        if (address == null){
             return null;
         }
         UpdateProfileEntity updateProfileEntity = new UpdateProfileEntity();
-        updateProfileEntity.setBuildingInfo(addressDTO.getBuildingInfo());
-        updateProfileEntity.setStreetName(addressDTO.getStreetName());
-        updateProfileEntity.setLocalBody(addressDTO.getLocalBody());
-        updateProfileEntity.setCity(addressDTO.getCity());
-        updateProfileEntity.setDistrict(addressDTO.getDistrict());
-        updateProfileEntity.setState(addressDTO.getState());
-        updateProfileEntity.setCountry(addressDTO.getCountry());
-        updateProfileEntity.setGMap(addressDTO.getGMapLink());
+        updateProfileEntity.setBuildingInfo(address.getBuildingInfo());
+        updateProfileEntity.setStreetName(address.getStreetName());
+        updateProfileEntity.setLocalBody(address.getLocalBody());
+        updateProfileEntity.setCity(address.getCity());
+        updateProfileEntity.setDistrict(address.getDistrict());
+        updateProfileEntity.setState(address.getState());
+        updateProfileEntity.setCountry(address.getCountry());
+        updateProfileEntity.setGMap(address.getGMapLink());
         return updateProfileEntity;
     }
 
@@ -108,7 +108,7 @@ public class MapperUtility {
                     responseDTO.setAvailableTime(offering.getAvailableTime());
 
                     AddressEntity address = addressRepository.findByRegisterEntityEmail(offering.getEmail());
-                    AddressDTO addressDTO = new AddressDTO();
+                    Address addressDTO = new Address();
                     addressDTO.setBuildingInfo(address.getBuildingInfo());
                     addressDTO.setStreetName(address.getStreetName());
                     addressDTO.setLocalBody(address.getLocalBody());
@@ -118,7 +118,7 @@ public class MapperUtility {
                     addressDTO.setCountry(address.getCountry());
                     addressDTO.setGMapLink(address.getGMap());
 
-                    responseDTO.setAddressDTO(addressDTO);
+                    responseDTO.setAddress(addressDTO);
                     return responseDTO;
                 })
                 .collect(Collectors.toList());
@@ -145,17 +145,17 @@ public class MapperUtility {
                         // Fetch address details associated with offering
                         AddressEntity addressEntity = addressRepository.findByRegisterEntityEmail(offeringEntity.getEmail());
                         if (addressEntity != null) {
-                            AddressDTO addressDTO = new AddressDTO();
-                            addressDTO.setBuildingInfo(addressEntity.getBuildingInfo());
-                            addressDTO.setStreetName(addressEntity.getStreetName());
-                            addressDTO.setLocalBody(addressEntity.getLocalBody());
-                            addressDTO.setCity(addressEntity.getCity());
-                            addressDTO.setDistrict(addressEntity.getDistrict());
-                            addressDTO.setState(addressEntity.getState());
-                            addressDTO.setCountry(addressEntity.getCountry());
-                            addressDTO.setGMapLink(addressEntity.getGMap());
+                            Address address = new Address();
+                            address.setBuildingInfo(addressEntity.getBuildingInfo());
+                            address.setStreetName(addressEntity.getStreetName());
+                            address.setLocalBody(addressEntity.getLocalBody());
+                            address.setCity(addressEntity.getCity());
+                            address.setDistrict(addressEntity.getDistrict());
+                            address.setState(addressEntity.getState());
+                            address.setCountry(addressEntity.getCountry());
+                            address.setGMapLink(addressEntity.getGMap());
 
-                            responseDTO.setAddressDTO(addressDTO);
+                            responseDTO.setAddress(address);
                         }
                     }
 
@@ -172,7 +172,7 @@ public class MapperUtility {
             return null;
         }
         OfferingEntity offeringEntity = new OfferingEntity();
-        offeringEntity.setOfferingID(vendorDTO.getOfferingID());
+        offeringEntity.setOfferingID((long) vendorDTO.getOfferingID());
         offeringEntity.setEmail(username);
         offeringEntity.setOfferingName(vendorDTO.getName());
         offeringEntity.setOfferingType(vendorDTO.getType());
@@ -184,6 +184,7 @@ public class MapperUtility {
         offeringEntity.setAvailableTime(vendorDTO.getAvailableTime());
         return offeringEntity;
     }
+
     public OfferingEntity toOfferingREntity(VendorRegisterDTO vendorRegisterDTO, String username) {
 
         if(vendorRegisterDTO == null)
@@ -203,4 +204,21 @@ public class MapperUtility {
         return offeringEntity;
     }
 
+    public List<VendorDTO> toListVendorDTO(List<OfferingEntity> offerings) {
+        return offerings.stream()
+                .map(offering -> {
+                    VendorDTO vendorDTO = new VendorDTO();
+                    vendorDTO.setOfferingID(Math.toIntExact(offering.getOfferingID()));
+                    vendorDTO.setName(offering.getOfferingName());
+                    vendorDTO.setType(offering.getOfferingType());
+                    vendorDTO.setCategory(offering.getCategory());
+                    vendorDTO.setDescription(offering.getDescription());
+                    vendorDTO.setImage(offering.getImage());
+                    vendorDTO.setPrice(offering.getPrice());
+                    vendorDTO.setAvailable(offering.isAvailable());
+                    vendorDTO.setAvailableTime(offering.getAvailableTime());
+                    return vendorDTO;
+                })
+                .collect(Collectors.toList());
+    }
 }

@@ -3,8 +3,6 @@ package com.project.localfindr.model.DTO;
 import com.project.localfindr.enumeration.OfferingType;
 import lombok.Data;
 
-import java.awt.*;
-
 @Data
 public class WishlistResponseDTO {
 
@@ -17,5 +15,5 @@ public class WishlistResponseDTO {
     private byte[] image;
     private Boolean isAvailable;
     private String availableTime;
-    private AddressDTO addressDTO;
+    private Address address;
 }

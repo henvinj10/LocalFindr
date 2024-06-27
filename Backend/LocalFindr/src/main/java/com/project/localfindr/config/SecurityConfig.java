@@ -25,6 +25,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/register", "/auth/login", "/auth/logout").permitAll()
                         .requestMatchers("/customer/**").hasAuthority("CUSTOMER")
                         .requestMatchers("/user/**").hasAuthority("VENDOR")
+                        .requestMatchers("/vendor/**").hasAuthority("VENDOR")
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(handling -> handling

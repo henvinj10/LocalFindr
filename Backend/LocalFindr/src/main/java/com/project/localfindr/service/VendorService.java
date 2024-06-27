@@ -5,10 +5,7 @@ import com.project.localfindr.model.DTO.VendorDTO;
 import com.project.localfindr.model.DTO.VendorRegisterDTO;
 import com.project.localfindr.model.DTO.VendorResponseDTO;
 import com.project.localfindr.model.Entities.OfferingEntity;
-import com.project.localfindr.repository.RemoveItemRepository;
-import com.project.localfindr.repository.UpdateItemRepository;
-import com.project.localfindr.repository.VendorDataRepository;
-import com.project.localfindr.repository.VendorInsertRepository;
+import com.project.localfindr.repository.*;
 import com.project.localfindr.utility.JwtUtil;
 import com.project.localfindr.utility.MapperUtility;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,8 +18,6 @@ import java.util.List;
 public class VendorService {
 
     @Autowired
-    private VendorInsertRepository vendorInsertRepository;
-    @Autowired
     private VendorDataRepository vendorDataRepository;
     @Autowired
     private MapperUtility mapperUtility;
@@ -32,34 +27,33 @@ public class VendorService {
     private UpdateItemRepository updateItemRepository;
     @Autowired
     private RemoveItemRepository removeItemRepository;
+    @Autowired
+    private OfferingRepository offeringRepository;
 
     public VendorResponseDTO createItem(HttpServletRequest request, VendorRegisterDTO vendorRegisterDTO){
         OfferingEntity offeringEntity = mapperUtility.toOfferingREntity(vendorRegisterDTO,getEmail(request));
-        Integer itemId = vendorInsertRepository.insertItem(offeringEntity);
+        offeringRepository.save(offeringEntity);
         VendorResponseDTO vendorResponseDTO = new VendorResponseDTO();
         vendorResponseDTO.setMessage("Item added");
-        vendorResponseDTO.setOfferingId(itemId);
         return vendorResponseDTO;
     }
-
 
     public VendorResponseDTO modifyItem(HttpServletRequest request, VendorDTO vendorDTO){
         OfferingEntity offeringEntity = mapperUtility.toOfferingEntity(vendorDTO,getEmail(request));
         updateItemRepository.updateItem(offeringEntity);
         VendorResponseDTO vendorResponseDTO = new VendorResponseDTO();
         vendorResponseDTO.setMessage("Item updated");
-        vendorResponseDTO.setOfferingId(offeringEntity.getOfferingID());
         return vendorResponseDTO;
     }
     public VendorResponseDTO removeItem(HttpServletRequest request, Integer offeringId){
-         removeItemRepository.deleteItem(offeringId,getEmail(request));
+         removeItemRepository.deleteItem(Long.valueOf(offeringId),getEmail(request));
         VendorResponseDTO vendorResponseDTO = new VendorResponseDTO();
         vendorResponseDTO.setMessage("Item updated");
-        vendorResponseDTO.setOfferingId(offeringId);
         return vendorResponseDTO;
     }
-    public List<VendorDTO> fetchItems() {
-        return vendorDataRepository.getItem();
+    public List<VendorDTO> fetchItems(HttpServletRequest request) {
+
+        return mapperUtility.toListVendorDTO(vendorDataRepository.findByEmail(getEmail(request)));
     }
 
     private String getEmail(HttpServletRequest request){

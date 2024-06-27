@@ -30,7 +30,7 @@ public class VendorController {
     }
 
     @GetMapping("/all")
-    public List<VendorDTO> getItems() {
-        return vendorService.fetchItems();
+    public List<VendorDTO> getItems(HttpServletRequest request) {
+        return vendorService.fetchItems(request);
     }
 }

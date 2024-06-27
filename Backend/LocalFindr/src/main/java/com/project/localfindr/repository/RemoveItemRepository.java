@@ -9,10 +9,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RemoveItemRepository extends JpaRepository<OfferingEntity, String> {
+public interface RemoveItemRepository extends JpaRepository<OfferingEntity, Long> {
 
     @Transactional
     @Modifying
-    @Query("DELETE FROM offerings o WHERE o.offeringId = :#{offeringId} AND o.email = :#{email}")
-    void deleteItem(@Param("offeringId") Integer offeringId, @Param("email") String email);
+    @Query("DELETE FROM OfferingEntity o WHERE o.offeringID = :offeringId AND o.email = :email")
+    void deleteItem(Long offeringId, String email);
 }
