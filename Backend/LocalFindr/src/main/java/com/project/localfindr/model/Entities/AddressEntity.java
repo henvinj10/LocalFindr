@@ -10,14 +10,19 @@ public class AddressEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "address_id")
     private int addressId;
+    @Column(name = "building_info")
     private String buildingInfo;
+    @Column(name = "street_name")
     private String streetName;
+    @Column(name = "local_body")
     private String localBody;
     private String city;
     private String district;
     private String state;
     private String country;
+    @Column(name = "g_map")
     private String gMap;
 
     @OneToOne

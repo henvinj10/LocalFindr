@@ -13,5 +13,5 @@ public class RegisterDTO {
     @Enumerated(EnumType.STRING)
     private UserType userType;
 
-    private AddressDTO addressDTO;
+    private Address address;
 }

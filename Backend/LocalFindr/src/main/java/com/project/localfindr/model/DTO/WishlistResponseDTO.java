@@ -3,17 +3,17 @@ package com.project.localfindr.model.DTO;
 import com.project.localfindr.enumeration.OfferingType;
 import lombok.Data;
 
-import java.awt.*;
-// Same as offering entity
 @Data
-public class VendorDTO {
+public class WishlistResponseDTO {
+
     private int offeringID;
     private String name;
     private OfferingType type;
     private String category;
     private String description;
-    private double price;
+    private Double price;
     private byte[] image;
-    private boolean isAvailable;
+    private Boolean isAvailable;
     private String availableTime;
+    private Address address;
 }

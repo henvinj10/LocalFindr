@@ -3,6 +3,6 @@ package com.project.localfindr.model.DTO;
 import lombok.Data;
 
 @Data
-public class VendorResponseDTO {
-    String message;
+public class DeleteResponseDTO {
+    private String message;
 }
