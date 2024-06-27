@@ -8,7 +8,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   hasAtLeastOneDigit,
   hasAtLeastOneLowercase,
@@ -19,14 +19,15 @@ import {
   isValidEmail,
 } from "../utils/Validations";
 import TextInputField from "../components/TextInputField";
-// import axios from "axios";
-import Toast from "react-native-toast-message";
 import colors from "../constants/Colors";
 import { Picker } from "@react-native-picker/picker";
+import axios from "axios";
+import Toast from "react-native-toast-message";
+import CustomButton from "../components/Button";
 
 const RegistrationScreen = ({ navigation }) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [name, setName] = useState({ value: "", valid: false, error: null });
+  // const [name, setName] = useState({ value: "", valid: false, error: null });
   const [email, setEmail] = useState({ value: "", valid: false, error: null });
   const [password, setPassword] = useState({
     value: "",
@@ -39,7 +40,7 @@ const RegistrationScreen = ({ navigation }) => {
     error: null,
   });
   const [userType, setUserType] = useState({
-    value: "",
+    value: "CUSTOMER",
     valid: false,
     error: null,
   });
@@ -100,6 +101,7 @@ const RegistrationScreen = ({ navigation }) => {
       return;
     }
     setEmail({ value: text, valid: true, error: null });
+    // console.log(email.value);
   };
 
   handlePasswordChange = (text) => {
@@ -144,6 +146,7 @@ const RegistrationScreen = ({ navigation }) => {
       return;
     }
     setPassword({ value: text, valid: true, error: null });
+    // console.log(password.value);
   };
 
   handleConfirmPasswordChange = (text) => {
@@ -161,6 +164,10 @@ const RegistrationScreen = ({ navigation }) => {
   const handleUserTypeChange = (itemValue) => {
     setUserType({ value: itemValue, valid: true, error: null });
   };
+
+  useEffect(() => {
+    console.log(userType);
+  }, [userType]);
 
   handleBuildingInfoChange = (text) => {
     if (isEmpty(text)) {
@@ -259,71 +266,113 @@ const RegistrationScreen = ({ navigation }) => {
   };
 
   handleRegister = () => {
-    if (
-      name.valid &&
-      email.valid &&
-      password.valid &&
-      confirmPassword.valid &&
-      userType.valid &&
-      buildingInfo.valid &&
-      streetName.valid &&
-      villageOrMunicipality.valid &&
-      city.valid &&
-      district.valid &&
-      state.valid &&
-      country.valid &&
-      gMapLink.valid
-    ) {
-      registerUser();
+    console.log(email.value);
+    console.log(password.value);
+    console.log(userType.value);
+    if (email.valid && password.valid && userType.value === "CUSTOMER") {
+      registerCustomer();
+      if (
+        userType.value === "VENDOR" &&
+        confirmPassword.valid &&
+        buildingInfo.valid &&
+        streetName.valid &&
+        villageOrMunicipality.valid &&
+        city.valid &&
+        district.valid &&
+        state.valid &&
+        country.valid &&
+        gMapLink.valid
+      ) {
+        registerVendor();
+      }
     } else {
       Alert.alert("Incorrect data", "Please check your inputs");
     }
   };
 
-  //   registerUser = async () => {
-  //     try {
-  //       const response = await axios.post(`${API_BASE_URL}/users/register`, {
-  //         username: name.value,
-  //         email: email.value,
-  //         password: password.value,
-  //         userType: userType.value,
-  //         address: {
-  //           buildingInfo: buildingInfo.value,
-  //           streetName: streetName.value,
-  //           villageOrMunicipality: villageOrMunicipality.value,
-  //           city: city.value,
-  //           district: district.value,
-  //           state: state.value,
-  //           country: country.value,
-  //           gMapLink: gMapLink.value,
-  //         },
-  //       });
+  registerCustomer = async () => {
+    try {
+      const response = await axios.post(`http://10.4.6.44:8080/auth/register`, {
+        // username: name.value,
+        email: email.value,
+        password: password.value,
+        userType: userType.value,
+        address: {},
+      });
 
-  //       Toast.show({
-  //         type: "success",
-  //         text1: "User registered successfully, Please verify your mail",
-  //         position: "bottom",
-  //       });
+      Toast.show({
+        type: "success",
+        text1: "User registered successfully, Please verify your mail",
+        position: "bottom",
+      });
 
-  //       setTimeout(() => {
-  //         navigation.navigate("Login");
-  //       }, 1000);
-  //     } catch (error) {
-  //       if (error.response) {
-  //         Toast.show({
-  //           type: "error",
-  //           text1: error.response.data.message,
-  //           position: "bottom",
-  //         });
-  //       } else {
-  //         Toast.show({
-  //           type: "error",
-  //           text1: "Internal Server Error",
-  //           position: "bottom",
-  //         });
-  //       }
-  //     }
-  //   };
+      setTimeout(() => {
+        navigation.navigate("Login");
+      }, 1000);
+    } catch (error) {
+      if (error.response) {
+        // Toast.show({
+        //   type: "error",
+        //   text1: error.response.data.message,
+        //   position: "bottom",
+        // });
+        console.log("error");
+      } else {
+        // Toast.show({
+        //   type: "error",
+        //   text1: "Internal Server Error",
+        //   position: "bottom",
+        // });
+        console.log("error 2");
+      }
+    }
+  };
+
+  registerVendor = async () => {
+    try {
+      const response = await axios.post(`http://10.4.6.44:8080/auth/register`, {
+        email: email.value,
+        password: password.value,
+        userType: userType.value,
+        address: {
+          buildingInfo: buildingInfo.value,
+          streetName: streetName.value,
+          villageOrMunicipality: villageOrMunicipality.value,
+          city: city.value,
+          district: district.value,
+          state: state.value,
+          country: country.value,
+          gMapLink: gMapLink.value,
+        },
+      });
+
+      Toast.show({
+        type: "success",
+        text1: "User registered successfully, Please verify your mail",
+        position: "bottom",
+      });
+
+      setTimeout(() => {
+        navigation.navigate("Login");
+      }, 1000);
+    } catch (error) {
+      if (error.response) {
+        Toast.show({
+          type: "error",
+          text1: error.response.data.message,
+          position: "bottom",
+        });
+        console.log("error");
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Internal Server Error",
+          position: "bottom",
+        });
+        console.log("error 2");
+      }
+    }
+  };
 
   return (
     <SafeAreaView style={styles.mainContainer}>
@@ -335,13 +384,6 @@ const RegistrationScreen = ({ navigation }) => {
             style={styles.logo}
           />
           <Text style={styles.headerText}>Create Account</Text>
-          {/* <TextInputField
-            value={name.value}
-            onChangeText={handleNameChange}
-            placeholder="Name"
-            error={name.error}
-            autoCapitalize="words"
-          /> */}
           <TextInputField
             value={email.value}
             onChangeText={handleEmailChange}
@@ -376,73 +418,89 @@ const RegistrationScreen = ({ navigation }) => {
               style={styles.picker}
               onValueChange={handleUserTypeChange}
             >
-              <Picker.Item label="Consumer" value="Consumer" />
-              <Picker.Item label="Vendor" value="Vendor" />
+              <Picker.Item label="Customer" value="CUSTOMER" />
+              <Picker.Item label="Vendor" value="VENDOR" />
             </Picker>
             {userType.error && (
               <Text style={styles.errorText}>{userType.error}</Text>
             )}
           </View>
           {/* End of User Type Dropdown */}
-          <TextInputField
-            value={buildingInfo.value}
-            onChangeText={handleBuildingInfoChange}
-            placeholder="Building Info"
-            error={buildingInfo.error}
-          />
-          <TextInputField
-            value={streetName.value}
-            onChangeText={handleStreetNameChange}
-            placeholder="Street Name"
-            error={streetName.error}
-          />
-          <TextInputField
-            value={villageOrMunicipality.value}
-            onChangeText={handleVillageOrMunicipalityChange}
-            placeholder="Village or Municipality"
-            error={villageOrMunicipality.error}
-          />
-          <TextInputField
-            value={city.value}
-            onChangeText={handleCityChange}
-            placeholder="City"
-            error={city.error}
-          />
-          <TextInputField
-            value={district.value}
-            onChangeText={handleDistrictChange}
-            placeholder="District"
-            error={district.error}
-          />
-          <TextInputField
-            value={state.value}
-            onChangeText={handleStateChange}
-            placeholder="State"
-            error={state.error}
-          />
-          <TextInputField
-            value={country.value}
-            onChangeText={handleCountryChange}
-            placeholder="Country"
-            error={country.error}
-          />
-          <TextInputField
-            value={gMapLink.value}
-            onChangeText={handleGMapLinkChange}
-            placeholder="Google Map Link"
-            error={gMapLink.error}
-          />
-          <Pressable style={styles.button} onPress={handleRegister}>
-            <Text style={styles.buttonText}>Create Account</Text>
-          </Pressable>
-          <Pressable
-            style={styles.loginButton}
-            onPress={() => navigation.navigate("Login")}
-          >
+          {userType.value === "VENDOR" && (
+            <>
+              <TextInputField
+                label="Building Information"
+                placeholder="Enter building info"
+                value={buildingInfo.value}
+                onChangeText={handleBuildingInfoChange}
+                errorMessage={buildingInfo.error}
+              />
+              <TextInputField
+                label="Street Name"
+                placeholder="Enter street name"
+                value={streetName.value}
+                onChangeText={handleStreetNameChange}
+                errorMessage={streetName.error}
+              />
+              <TextInputField
+                label="Village or Municipality"
+                placeholder="Enter village or municipality"
+                value={villageOrMunicipality.value}
+                onChangeText={handleVillageOrMunicipalityChange}
+                errorMessage={villageOrMunicipality.error}
+              />
+              <TextInputField
+                label="City"
+                placeholder="Enter city"
+                value={city.value}
+                onChangeText={handleCityChange}
+                errorMessage={city.error}
+              />
+              <TextInputField
+                label="District"
+                placeholder="Enter district"
+                value={district.value}
+                onChangeText={handleDistrictChange}
+                errorMessage={district.error}
+              />
+              <TextInputField
+                label="State"
+                placeholder="Enter state"
+                value={state.value}
+                onChangeText={handleStateChange}
+                errorMessage={state.error}
+              />
+              <TextInputField
+                label="Country"
+                placeholder="Enter country"
+                value={country.value}
+                onChangeText={handleCountryChange}
+                errorMessage={country.error}
+              />
+              <TextInputField
+                label="Google Map Link"
+                placeholder="Enter Google Map link"
+                value={gMapLink.value}
+                onChangeText={handleGMapLinkChange}
+                errorMessage={gMapLink.error}
+              />
+            </>
+          )}
+          <View style={styles.button}>
+            <CustomButton label="Create Account" handlePress={handleRegister} />
+          </View>
+          <View style={styles.loginContainer}>
             <Text style={styles.loginButtonText}>
-              Already have an account? Log in
+              Already have an account?{" "}
             </Text>
-          </Pressable>
+            <Pressable
+              onPress={() => {
+                navigation.navigate("Login");
+              }}
+            >
+              <Text style={styles.hyperLink}>Log in</Text>
+            </Pressable>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -460,13 +518,15 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   logo: {
-    height: 100,
-    width: 200,
+    width: "100%",
+    height: 250,
+    resizeMode: "contain",
   },
   headerText: {
     fontSize: 25,
     fontWeight: "bold",
     color: colors.primary,
+    marginBottom: 20,
   },
   label: {
     flex: 1,
@@ -504,6 +564,17 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     marginVertical: 10,
+  },
+  loginContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 20,
+  },
+  hyperLink: {
+    color: "blue",
+    fontWeight: "bold",
+    marginLeft: 5,
+    fontSize: 15,
   },
   loginButtonText: {
     fontSize: 15,

@@ -8,7 +8,7 @@ import {
   Platform,
 } from "react-native";
 
-const Input = ({
+const InputNext = ({
   id = "Input",
   style,
   color,
@@ -195,4 +195,4 @@ const Input = ({
   );
 };
 
-export default React.memo(Input);
+export default InputNext;

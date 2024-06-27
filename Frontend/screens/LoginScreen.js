@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
+  Dimensions,
   Image,
   Pressable,
   SafeAreaView,
@@ -12,6 +13,8 @@ import {
 import { isValidEmail, isAtLeast8Characters } from "../utils/Validations";
 import TextInputField from "../components/TextInputField";
 import colors from "../constants/Colors";
+import CustomButton from "../components/Button";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LoginScreen = ({ navigation }) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -26,6 +29,7 @@ const LoginScreen = ({ navigation }) => {
   const API_BASE_URL = "your_api_base_url_here";
 
   const handleLogin = () => {
+    console.log(AsyncStorage.getItem("token"));
     if (email.valid && password.valid) {
       userLogin();
     } else {
@@ -36,7 +40,7 @@ const LoginScreen = ({ navigation }) => {
   const userLogin = async () => {
     try {
       // Example login API request (adjust to your API structure)
-      const response = await fetch(`${API_BASE_URL}/users/login`, {
+      const response = await fetch(`http://10.4.6.44:8080/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -51,10 +55,11 @@ const LoginScreen = ({ navigation }) => {
       }
       const token = await response.json();
       // Store token using AsyncStorage or other storage method
-      // Example: AsyncStorage.setItem("token", token);
+      Example: AsyncStorage.setItem("token", token);
 
       // Example Toast message (adjust as needed)
       Alert.alert("Login Successful", "Welcome!");
+      console.log(response);
       setTimeout(() => {
         navigation.replace("Main");
       }, 1000);
@@ -121,15 +126,9 @@ const LoginScreen = ({ navigation }) => {
               <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
             </Pressable>
           </View>
-          <Pressable
-            style={({ pressed }) => [
-              styles.button,
-              pressed && styles.buttonPressed,
-            ]}
-            onPress={handleLogin}
-          >
-            <Text style={styles.buttonText}>Login</Text>
-          </Pressable>
+          <View style={styles.button}>
+            <CustomButton label="Login" handlePress={handleLogin} />
+          </View>
           <View style={styles.signUpContainer}>
             <Text style={styles.signUpText}>Don't have an account? </Text>
             <Pressable
@@ -137,9 +136,7 @@ const LoginScreen = ({ navigation }) => {
                 navigation.navigate("Register");
               }}
             >
-              <Text style={[styles.signUpText, styles.signUpLink]}>
-                Sign up here
-              </Text>
+              <Text style={styles.hyperLink}>Sign up here</Text>
             </Pressable>
           </View>
         </View>
@@ -151,13 +148,15 @@ const LoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.backgroundColor,
   },
   image: {
-    width: "100%",
+    width: Dimensions.get("screen").width * 0.9,
     height: 250,
     resizeMode: "contain",
     marginTop: 30,
+    alignSelf: "center",
+    paddingHorizontal: 30,
   },
   form: {
     paddingHorizontal: 30,
@@ -169,9 +168,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   button: {
-    backgroundColor: colors.primary,
     borderRadius: 8,
-    paddingVertical: 14,
+    paddingVertical: 16,
     marginTop: 20,
     alignItems: "center",
   },
@@ -189,12 +187,13 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   signUpText: {
-    fontSize: 16,
+    fontSize: 15,
   },
-  signUpLink: {
-    color: colors.primary,
+  hyperLink: {
+    color: "blue",
     fontWeight: "bold",
     marginLeft: 5,
+    fontSize: 15,
   },
   forgotPassword: {
     alignItems: "flex-end",

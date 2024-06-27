@@ -1,41 +1,24 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
-import { useNavigation } from "@react-navigation/native";
+import React, { useState } from "react";
+import CustomSearchBar from "./SearchBar";
 
-const Header = ({ isCart }) => {
-  const navigation = useNavigation();
+const Header = ({ handleBack }) => {
+  const [search, setSearch] = useState({ value: "" });
 
-  const handleBack = () => {
-    navigation.navigate("HOME");
+  updateSearch = (search) => {
+    setSearch({ value: search });
   };
-  return (
-    <View style={styles.header}>
-      {isCart ? (
-        <TouchableOpacity
-          style={styles.appDrawerContainer}
-          onPress={handleBack}
-        >
-          {/* <Image
-            source={require("../assets/arrowback.png")}
-            style={styles.appBackIcon}
-          /> */}
-        </TouchableOpacity>
-      ) : (
-        <View style={styles.appDrawerContainer}>
-          <Image
-            source={require("../assets/app-name.png")}
-            style={styles.appDrawerIcon}
-          />
-        </View>
-      )}
 
-      {isCart ? <Text style={styles.titleText}>My Cart</Text> : null}
-      <View>
-        {/* <Image
-          source={require("../assets/Ellipse2.png")}
-          style={styles.profileImage}
-        /> */}
-      </View>
+  const handleSearch = (query) => {
+    console.log("Search query:", query);
+  };
+
+  return (
+    <View>
+      <CustomSearchBar onSearch={handleSearch} />
+      {/* <TouchableOpacity style={styles.appDrawerContainer} onPress={handleBack}>
+        <EvilIcons name="arrow-left" size={24} color="black" />
+      </TouchableOpacity> */}
     </View>
   );
 };

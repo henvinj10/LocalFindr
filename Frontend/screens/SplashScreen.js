@@ -1,36 +1,41 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect } from "react";
-import { View, Image, StyleSheet, Dimensions } from "react-native";
+import { View, Image, StyleSheet } from "react-native";
 import colors from "../constants/Colors";
+import { jwtDecode } from "jwt-decode";
+import "core-js/stable/atob";
 
 const SplashScreen = ({ navigation }) => {
-  useEffect(() => {
-    const delayNavigation = setTimeout(() => {
-      navigation.replace("UserHomeTabs");
-    }, 2000); // 2 seconds delay
+  // const token =
+  //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+  // console.log(jwtDecode(token).name);
 
+  useEffect(() => {
+    fetchToken();
     // Cleanup the timeout if the component unmounts before the timeout finishes
-    return () => clearTimeout(delayNavigation);
   }, [navigation]);
-  //   const fetchToken = async () => {
-  //     const token = await AsyncStorage.getItem('token');
-  //     setTimeout(() => {
-  //       if (token === null) {
-  //         navigation.replace('Login');
-  //       } else {
-  //         navigation.replace('Main');
-  //       }
-  //     }, 2000);
-  //   };
-  //   fetchToken();
+  const fetchToken = async () => {
+    const token = await AsyncStorage.getItem("token");
+    setTimeout(() => {
+      if (token === null) {
+        navigation.replace("Login");
+      } else {
+        if (jwtDecode(token).userType === "CUSTOMER") {
+          navigation.replace("UserHomeTabs");
+        } else {
+          navigation.replace("VendorHomeTabs");
+        }
+      }
+    }, 2000);
+  };
 
   return (
     <View style={styles.container}>
       <Image
         source={require("../assets/logo.png")}
-        style={styles.logo}
         resizeMode="contain"
         size="large"
+        style={styles.logo}
       />
     </View>
   );
@@ -42,10 +47,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: colors.backgroundColor,
+    padding: 20,
+    // width: Dimensions.get("screen").width,
   },
   logo: {
-    height: 250,
-    width: 250,
+    resizeMode: "contain",
+    width: "100%",
   },
 });
 

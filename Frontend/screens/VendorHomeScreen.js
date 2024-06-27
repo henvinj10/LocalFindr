@@ -7,9 +7,13 @@ import {
   StyleSheet,
   Alert,
   Image,
+  Pressable,
 } from "react-native";
 import axios from "axios";
 import * as ImagePicker from "expo-image-picker";
+import colors from "../constants/Colors";
+import CustomButton from "../components/Button";
+import TextInputField from "../components/TextInputField";
 
 const UploadProductScreen = () => {
   const [name, setName] = useState("");
@@ -19,7 +23,7 @@ const UploadProductScreen = () => {
 
   const selectImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
@@ -75,27 +79,26 @@ const UploadProductScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Product Name</Text>
-      <TextInput style={styles.input} value={name} onChangeText={setName} />
-      <Text style={styles.label}>Category</Text>
-      <TextInput
-        style={styles.input}
-        value={category}
-        onChangeText={setCategory}
-      />
-      <Text style={styles.label}>Price</Text>
-      <TextInput
-        style={styles.input}
-        value={price}
-        onChangeText={setPrice}
-        keyboardType="numeric"
-      />
-      <Text style={styles.label}>Image</Text>
+      <Text style={styles.title}>Add Product</Text>
       <View style={styles.imageContainer}>
-        <Button title="Pick an image from camera roll" onPress={selectImage} />
         {image && <Image source={{ uri: image }} style={styles.imagePreview} />}
       </View>
-      <Button title="Upload Product" onPress={handleSubmit} />
+      <Text style={styles.label}>Product Name</Text>
+      <TextInputField value={name} onChangeText={setName} />
+      {/* <TextInput style={styles.input} value={name} onChangeText={setName} /> */}
+      <Text style={styles.label}>Category</Text>
+      <TextInputField value={category} onChangeText={setCategory} />
+      <Text style={styles.label}>Price</Text>
+      <TextInputField
+        value={price}
+        onChangeText={setPrice}
+        keyboardType={"numeric"}
+      />
+      <View style={styles.buttonContainer}>
+        <CustomButton label="Select Image" handlePress={selectImage} />
+        <CustomButton label="Upload" handlePress={handleSubmit} />
+      </View>
+      <View />
     </View>
   );
 };
@@ -105,10 +108,17 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: "#f5f5f5",
+    justifyContent: "center",
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
   },
   label: {
     fontSize: 16,
     marginVertical: 8,
+    fontWeight: "bold",
   },
   input: {
     height: 40,
@@ -128,6 +138,11 @@ const styles = StyleSheet.create({
     height: 250,
     marginVertical: 10,
     borderRadius: 8,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginTop: 25,
   },
 });
 

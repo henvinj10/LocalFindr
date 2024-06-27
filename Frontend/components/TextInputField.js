@@ -17,10 +17,10 @@ const TextInputField = ({
       <View
         style={[styles.inputContainer, error && styles.errorInputContainer]}
       >
-        {icon && <Ionicons name={icon} size={24} color="#FFFFFF" />}
+        {icon && <Ionicons name={icon} size={24} color="#000000" />}
         <TextInput
-          style={[styles.textInput, { color: "#FFFFFF" }]}
-          placeholderTextColor="#9e9e9e"
+          style={styles.textInput}
+          placeholderTextColor="#8d8d8d"
           placeholder={placeholder}
           keyboardType={keyboardType}
           maxLength={maxLength}
@@ -31,9 +31,9 @@ const TextInputField = ({
         {toggleVisibility && (
           <Pressable onPress={toggleVisibility}>
             {secureTextEntry ? (
-              <Ionicons name="eye-off-outline" size={24} color="#FFFFFF" />
+              <Ionicons name="eye-off-outline" size={24} color="#000000" />
             ) : (
-              <Ionicons name="eye-outline" size={24} color="#FFFFFF" />
+              <Ionicons name="eye-outline" size={24} color="#000000" />
             )}
           </Pressable>
         )}
@@ -48,13 +48,14 @@ export default TextInputField;
 const styles = StyleSheet.create({
   inputContainer: {
     width: "100%",
-    marginTop: 20,
-    padding: 10,
+    padding: 5,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#333333", // Dark background color
+    backgroundColor: "#e7e2e2", // Dark background color
     borderRadius: 6,
+    elevation: 5,
+    marginBottom: 30,
   },
   errorInputContainer: {
     borderWidth: 1,
@@ -67,9 +68,10 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    color: "#FFFFFF", // Text color in dark mode
+    color: "#222121", // Text color in dark mode
     paddingHorizontal: 10,
     paddingVertical: 8,
     fontSize: 16,
+    fontWeight: "500",
   },
 });
