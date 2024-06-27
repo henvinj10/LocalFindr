@@ -20,4 +20,9 @@ public class RegisterEntity {
 
     @OneToOne(mappedBy = "registerEntity", cascade = CascadeType.ALL)
     private AddressEntity addressEntity;
+
+    public void setAddressEntity(AddressEntity addressEntity) {
+        this.addressEntity = addressEntity;
+        addressEntity.setRegisterEntity(this);
+    }
 }

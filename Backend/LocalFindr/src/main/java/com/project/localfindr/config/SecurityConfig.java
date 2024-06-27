@@ -24,7 +24,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/register", "/auth/login", "/auth/logout").permitAll()
                         .requestMatchers("/customer/**").hasAuthority("CUSTOMER")
-                        .requestMatchers("/user/**").hasAuthority("VENDOR")
+                        .requestMatchers("/user/profile").permitAll()
+                        .requestMatchers("/user/update").permitAll()
                         .requestMatchers("/vendor/**").hasAuthority("VENDOR")
                         .anyRequest().authenticated()
                 )
@@ -32,7 +33,7 @@ public class SecurityConfig {
                         .accessDeniedPage("/access-denied")
                 )
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/auth/register", "/auth/login")
+                        .ignoringRequestMatchers("/auth/register", "/auth/login", "/auth/logout")
                 );
         http.addFilterBefore(new CustomAuthorizationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
         return http.build();

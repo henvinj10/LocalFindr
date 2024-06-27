@@ -5,6 +5,7 @@ import com.project.localfindr.model.Entities.RegisterEntity;
 import com.project.localfindr.repository.AuthorizationRepository;
 import com.project.localfindr.utility.JwtUtil;
 import com.project.localfindr.utility.MapperUtility;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -61,7 +62,7 @@ public class AuthorizationService {
         return  loginResponseDTO;
     }
 
-    public LogoutResponseDTO logOutUser(String token) {
+    public LogoutResponseDTO logOutUser() {
         LogoutResponseDTO logoutResponseDTO = new LogoutResponseDTO();
         logoutResponseDTO.setMessage("Logout successful");
         return logoutResponseDTO;
@@ -72,8 +73,6 @@ public class AuthorizationService {
     }
 
     private boolean verifyPassword(String rawPassword, String encodedPassword) {
-        System.out.println("Raw Password: " + rawPassword);
-        System.out.println("Encoded Password: " + encodedPassword);
         return passwordEncoder.matches(rawPassword, encodedPassword);
     }
 }

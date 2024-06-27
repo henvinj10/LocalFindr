@@ -11,5 +11,5 @@ public class Address {
     private String district;
     private String state;
     private String country;
-    private String gMapLink;
+    private String gmapLink;
 }

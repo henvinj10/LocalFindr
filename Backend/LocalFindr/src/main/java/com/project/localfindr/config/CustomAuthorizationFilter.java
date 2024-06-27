@@ -32,9 +32,7 @@ public class CustomAuthorizationFilter  extends OncePerRequestFilter {
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String jwt = authorizationHeader.substring(7);
             String userType = jwtUtil.getUserTypeFromToken(jwt);
-
             if (userType != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                // Assuming a method to validate the token
                 if (jwtUtil.validateToken(jwt)) {
                     var authentication = new JwtAuthenticationToken(userType, new SimpleGrantedAuthority(userType));
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -42,8 +40,6 @@ public class CustomAuthorizationFilter  extends OncePerRequestFilter {
                 }
             }
         }
-
         chain.doFilter(request, response);
     }
-
 }

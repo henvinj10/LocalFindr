@@ -29,7 +29,6 @@ public class MapperUtility {
         registerEntity.setUserType(registerDTO.getUserType());
 
         registerEntity.setAddressEntity(toAddressEntity(registerDTO.getAddress()));
-        registerEntity.getAddressEntity().setRegisterEntity(registerEntity);
 
         return registerEntity;
     }
@@ -46,7 +45,7 @@ public class MapperUtility {
         addressEntity.setDistrict(address.getDistrict());
         addressEntity.setState(address.getState());
         addressEntity.setCountry(address.getCountry());
-        addressEntity.setGMap(address.getGMapLink());
+        addressEntity.setGMap(address.getGmapLink());
         return addressEntity;
     }
 
@@ -73,7 +72,7 @@ public class MapperUtility {
         address.setDistrict(profileAddressEntity.getDistrict());
         address.setState(profileAddressEntity.getState());
         address.setCountry(profileAddressEntity.getCountry());
-        address.setGMapLink(profileAddressEntity.getGMap());
+        address.setGmapLink(profileAddressEntity.getGMap());
         return address;
     }
 
@@ -89,7 +88,7 @@ public class MapperUtility {
         updateProfileEntity.setDistrict(address.getDistrict());
         updateProfileEntity.setState(address.getState());
         updateProfileEntity.setCountry(address.getCountry());
-        updateProfileEntity.setGMap(address.getGMapLink());
+        updateProfileEntity.setGMap(address.getGmapLink());
         return updateProfileEntity;
     }
 
@@ -116,7 +115,7 @@ public class MapperUtility {
                     addressDTO.setDistrict(address.getDistrict());
                     addressDTO.setState(address.getState());
                     addressDTO.setCountry(address.getCountry());
-                    addressDTO.setGMapLink(address.getGMap());
+                    addressDTO.setGmapLink(address.getGMap());
 
                     responseDTO.setAddress(addressDTO);
                     return responseDTO;
@@ -153,7 +152,7 @@ public class MapperUtility {
                             address.setDistrict(addressEntity.getDistrict());
                             address.setState(addressEntity.getState());
                             address.setCountry(addressEntity.getCountry());
-                            address.setGMapLink(addressEntity.getGMap());
+                            address.setGmapLink(addressEntity.getGMap());
 
                             responseDTO.setAddress(address);
                         }
