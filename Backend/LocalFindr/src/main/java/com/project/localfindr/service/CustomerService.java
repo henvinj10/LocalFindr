@@ -79,7 +79,7 @@ public class CustomerService {
         return mapperUtility.toListWishListResponseDTO(wishlistItems);
     }
 
-    private String getEmail(HttpServletRequest request){
+    String getEmail(HttpServletRequest request){
         final String authorizationHeader = request.getHeader("Authorization");
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {

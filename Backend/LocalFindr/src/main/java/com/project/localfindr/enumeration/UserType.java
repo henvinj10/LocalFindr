@@ -2,5 +2,5 @@ package com.project.localfindr.enumeration;
 
 public enum UserType {
 
-    CUSTOMER,VENDOR;
+    CUSTOMER,VENDOR, PRODUCT;
 }
