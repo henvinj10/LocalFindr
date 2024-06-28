@@ -17,7 +17,7 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService;
 
-    @GetMapping("/search")
+    @PostMapping("/search")
     public List<SearchResponseDTO> search(@RequestBody SearchDTO searchDTO, HttpServletRequest request) {
         return customerService.search(request, searchDTO);
     }
