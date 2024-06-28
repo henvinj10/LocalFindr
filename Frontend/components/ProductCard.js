@@ -1,15 +1,19 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
+import { useNavigation } from "@react-navigation/native";
 import fonts from "../constants/Fonts";
 
-// const ProductCard = ({ item, handleProductClick, toggleFavorite }) => {
-const ProductCard = ({ item }) => {
+const ProductCard = ({ item, toggleFavorite }) => {
+  const navigation = useNavigation();
+
+  const handleProductClick = (item) => {
+    navigation.navigate("ProductDetails", { item });
+  };
+
   return (
     <TouchableOpacity
       style={styles.container}
-      //   onPress={() => {
-      //     handleProductClick(item);
-      //   }}
+      onPress={() => handleProductClick(item)}
     >
       <Image source={{ uri: item.image }} style={styles.coverImage} />
       <View style={styles.contentContainer}>
@@ -18,19 +22,17 @@ const ProductCard = ({ item }) => {
       </View>
       <View style={styles.likeContainer}>
         <TouchableOpacity
-          onPress={() => {
-            toggleFavorite(item);
-          }}
+          onPress={() => toggleFavorite(item)}
         >
           {/* {item.isFavorite ? (
             <Image
               source={require("../assets/favoriteFilled.png")}
-              style={styles.faviorate}
+              style={styles.favorate}
             />
           ) : (
             <Image
               source={require("../assets/favorite.png")}
-              style={styles.faviorate}
+              style={styles.favorate}
             />
           )} */}
         </TouchableOpacity>
@@ -72,7 +74,7 @@ const styles = StyleSheet.create({
     right: 10,
     top: 10,
   },
-  faviorate: {
+  favorate: {
     height: 20,
     width: 20,
   },

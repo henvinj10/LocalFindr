@@ -137,7 +137,7 @@ function UserBottomTabNavigator() {
 function StackNavigator() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={"Splash"}>
+      <Stack.Navigator initialRouteName={"VendorHomeTabs"}>
         <Stack.Screen
           name={Routes.Splash}
           component={SplashScreen}
@@ -172,9 +172,6 @@ function StackNavigator() {
           name={Routes.Search}
           component={SearchScreen}
           options={{ headerShown: false }}
-          // sharedElements={(route) => {
-          //   return [{ id: "searchIcon" }];
-          // }}
         />
       </Stack.Navigator>
     </NavigationContainer>

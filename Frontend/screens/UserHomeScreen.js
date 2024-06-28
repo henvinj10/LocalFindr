@@ -5,77 +5,56 @@ import {
   View,
   Image,
   Pressable,
-  Dimensions,
+  ScrollView,
+  Alert,
 } from "react-native";
 import Animated, {
-  useSharedValue,
   FadeIn,
   FadeOut,
 } from "react-native-reanimated";
-import { EvilIcons } from "@expo/vector-icons";
 import { SelectList } from "react-native-dropdown-select-list";
 import colors from "../constants/Colors";
 import TextInputField from "../components/TextInputField";
 import { isEmpty } from "../utils/Validations";
 import SearchScreen from "./SearchScreen";
-import { ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 const UserHomeScreen = ({ navigation }) => {
-  const [selectedSection, setSelectedSection] = useState({
-    value: "",
-  });
-  // const logoOpacity = useSharedValue(0); // Shared value for logo opacity
-  const [search, setsearch] = useState({
-    value: "",
-    valid: false,
-    error: null,
-  });
-  const [localBody, setlocalBody] = useState({
-    value: "",
-    valid: false,
-    error: null,
-  });
+  const [selectedSection, setSelectedSection] = useState({ value: "" });
+  const [search, setsearch] = useState({ value: "", valid: false, error: null });
+  const [localBody, setlocalBody] = useState({ value: "", valid: false, error: null });
   const [results, setShowResults] = useState(false);
+  const [data, setData] = useState(null);
 
   const sections = [
-    { key: "1", value: "Products" },
-    { key: "2", value: "Services" },
+    { key: "1", value: "Product" },
+    { key: "2", value: "Service" },
     { key: "3", value: "All" },
   ];
 
-  // Function to handle section selection
   const handleSectionSelect = (val) => {
-    setSelectedSection({ value: val });
-    // Adjust logo opacity based on selection
-    // logoOpacity.value = val === "All" ? 1 : 0;
+    setSelectedSection({ value: val.toUpperCase() });
   };
 
-  handlesearchChange = (text) => {
+  const handlesearchChange = (text) => {
     if (isEmpty(text)) {
-      setsearch({
-        value: text,
-        valid: false,
-        error: "Please enter a valid search",
-      });
+      setsearch({ value: text, valid: false, error: "Please enter a valid search" });
       return;
     }
     setsearch({ value: text, valid: true, error: null });
   };
 
-  handlelocalBodyChange = (text) => {
+  const handlelocalBodyChange = (text) => {
     if (isEmpty(text)) {
-      setlocalBody({
-        value: text,
-        valid: false,
-        error: "Please enter a valid search",
-      });
+      setlocalBody({ value: text, valid: false, error: "Please enter a valid search" });
       return;
     }
     setlocalBody({ value: text, valid: true, error: null });
   };
 
-  if (results) {
+  if (data) {
     return (
       <Animated.View
         key={"NEWKey"}
@@ -83,10 +62,57 @@ const UserHomeScreen = ({ navigation }) => {
         exiting={FadeOut.duration(400)}
         style={{ flex: 1, height: "100%" }}
       >
-        <SearchScreen />
+        <SearchScreen data={data} />
       </Animated.View>
     );
   }
+
+  const fetchData = async () => {
+    try {
+      // Retrieve token from AsyncStorage
+      const token = await AsyncStorage.getItem("token");
+      console.log("Token:", token);
+      // Construct the request body
+      const requestBody = {
+        type: selectedSection.value,
+        name: search.value,
+        category: null,
+        price: 300000,
+        streetName: null,
+        localBody: null,
+        city: null
+      };
+      console.log("Request body:", requestBody);
+
+      const response = await axios.post("http://10.4.6.44:8080/customer/search", {
+        type: selectedSection.value,
+        name: search.value,
+        category: null,
+        price: 300000,
+        streetName: null,
+        localBody: localBody.value,
+        city: null
+      }, {
+
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+      })
+      // console.log("Response status:", response.data.image);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("Data fetched successfully:", result);
+      setData(result);
+      // navigation.navigate("SearchScreen", { data: result }); // Uncomment if needed
+    } catch (error) {
+      Alert.alert("Error", "Something went wrong while fetching data");
+      console.error("Fetch Error:", error);
+    }
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -108,68 +134,15 @@ const UserHomeScreen = ({ navigation }) => {
           autoCapitalize="none"
           keyboardType="default"
         />
-        {/* 
-        <View style={styles.searchContainer}> */}
         <View style={styles.searchBar}>
           <SelectList
-            setSelected={(val) => handleSectionSelect(val)}
+            setSelected={handleSectionSelect}
             data={sections}
             save="value"
             placeholder="Choose a section"
           />
         </View>
-        <TextInputField
-          value={localBody.value}
-          onChangeText={handlelocalBodyChange}
-          placeholder="Locality"
-          error={localBody.error}
-          autoCapitalize="none"
-          keyboardType="default"
-        />
-        <TextInputField
-          value={localBody.value}
-          onChangeText={handlelocalBodyChange}
-          placeholder="Locality"
-          error={localBody.error}
-          autoCapitalize="none"
-          keyboardType="default"
-        />
-        <TextInputField
-          value={localBody.value}
-          onChangeText={handlelocalBodyChange}
-          placeholder="Locality"
-          error={localBody.error}
-          autoCapitalize="none"
-          keyboardType="default"
-        />
-        <TextInputField
-          value={localBody.value}
-          onChangeText={handlelocalBodyChange}
-          placeholder="Locality"
-          error={localBody.error}
-          autoCapitalize="none"
-          keyboardType="default"
-        />
-        <TextInputField
-          value={localBody.value}
-          onChangeText={handlelocalBodyChange}
-          placeholder="Locality"
-          error={localBody.error}
-          autoCapitalize="none"
-          keyboardType="default"
-        />
-        <TextInputField
-          value={localBody.value}
-          onChangeText={handlelocalBodyChange}
-          placeholder="Locality"
-          error={localBody.error}
-          autoCapitalize="none"
-          keyboardType="default"
-        />
       </View>
-      {/* </View>
-      </View> */}
-      {/* Logo to fade in/out */}
       {selectedSection.value && search.value && localBody.value && (
         <Animated.View
           key={"uniqueKey"}
@@ -177,7 +150,8 @@ const UserHomeScreen = ({ navigation }) => {
           exiting={FadeOut.duration(400)}
           style={styles.appDrawerIcon}
         >
-          <Pressable onPress={() => setShowResults(!results)}>
+          {/* <Pressable onPress={() => setShowResults(!results)}> */}
+          <Pressable onPress={fetchData}>
             <Image
               source={require("../assets/search.png")}
               style={styles.appDrawerIcon}
@@ -214,11 +188,5 @@ const styles = StyleSheet.create({
   },
   searchBar: {
     marginBottom: 30,
-    //   // height: 150,
-    //   width: "100%",
-    //   borderRadius: 5,
-    //   // paddingHorizontal: 10,
-    //   // marginLeft: 10,
-    //   justifyContent: "center",
   },
 });

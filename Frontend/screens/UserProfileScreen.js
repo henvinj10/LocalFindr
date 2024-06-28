@@ -1,8 +1,17 @@
 import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import CustomButton from "../components/Button";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const UserData = () => {
+const UserData = ({ navigation }) => {
+  const handleLogout = () => {
+    AsyncStorage.removeItem("token");
+    navigation.replace("Login");
+    // product.color = selectedColor;
+    // product.size = selectedSize;
+    // // Add the product to the cart logic here
+    // navigation.navigate("CART");
+  };
   return (
     <View style={styles.container}>
       <View style={styles.card}>
@@ -26,7 +35,7 @@ const UserData = () => {
       <View style={styles.logout}>
         <CustomButton
           label="Logout"
-          handlePress={() => Alert.alert("Edit Profile")}
+          handlePress={handleLogout}
         />
       </View>
     </View>

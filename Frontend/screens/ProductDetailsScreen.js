@@ -1,7 +1,7 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useState } from "react";
+import { useRoute } from "@react-navigation/native";
 import Header from "../components/Header";
-import { useNavigation, useRoute } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 
 const colorsArray = [
@@ -15,12 +15,10 @@ const colorsArray = [
 
 const ProductDetailsScreen = () => {
   const route = useRoute();
-  const navigation = useNavigation();
-  const product = route.params.item;
+  const { item: product } = route.params;
+
   const [selectedSize, setSelectedSize] = useState("M");
   const [selectedColor, setSelectedColor] = useState("#B11D1D");
-  const imageUrl =
-    "https://res.cloudinary.com/dlc5c1ycl/image/upload/v1710567613/vulb5bckiruhpzt2v8ec.png";
 
   const handleAddToCart = () => {
     product.color = selectedColor;
@@ -39,11 +37,10 @@ const ProductDetailsScreen = () => {
       </View>
       <View style={styles.contentContainer}>
         <View style={styles.textContainer}>
-          <Text style={styles.fontText}>{product.title}</Text>
-          <Text style={styles.fontText}>${product.price}</Text>
+          <Text style={styles.fontText}>{product.name}</Text>
+          <Text style={styles.fontText}>{product.price}</Text>
         </View>
         <Text style={[styles.fontText, styles.sizeText]}>Size</Text>
-        {/* size container */}
         <View style={styles.sizeContainer}>
           <TouchableOpacity
             style={styles.sizeValueContainer}
@@ -98,7 +95,6 @@ const ProductDetailsScreen = () => {
             </Text>
           </TouchableOpacity>
         </View>
-        {/* color container */}
         <View style={styles.colorContainer}>
           {colorsArray.map((color, index) => {
             return (
@@ -124,7 +120,6 @@ const ProductDetailsScreen = () => {
             );
           })}
         </View>
-        {/* cart button */}
         <View>
           <TouchableOpacity style={styles.button} onPress={handleAddToCart}>
             <Text style={styles.buttonText}>Add to Cart</Text>
@@ -161,7 +156,6 @@ const styles = StyleSheet.create({
   },
   fontText: {
     fontSize: 20,
-    // fontFamily: fonts.regular,
     fontWeight: "700",
     color: "#444444",
   },
@@ -184,7 +178,6 @@ const styles = StyleSheet.create({
   },
   sizeValueText: {
     fontSize: 18,
-    // fontFamily: fonts.regular,
     fontWeight: "700",
   },
   selectedText: {
@@ -215,6 +208,5 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: "#FFFFFF",
     fontWeight: "700",
-    // fontFamily: fonts.regular,
   },
 });

@@ -4,22 +4,22 @@ import {
   Text,
   StyleSheet,
   Alert,
-  Image,
-  Pressable,
-  ScrollView,
+  Image
 } from "react-native";
 import axios from "axios";
 import * as ImagePicker from "expo-image-picker";
-import colors from "../constants/Colors";
+// import colors from "../constants/Colors";
 import CustomButton from "../components/Button";
 import TextInputField from "../components/TextInputField";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+// import RNFS from 'react-native-fs';
 
 const UploadProductScreen = () => {
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
   const [price, setPrice] = useState("");
   const [image, setImage] = useState(null);
+  const [base64Image, setBase64Image] = useState("");
 
   const selectImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -27,12 +27,15 @@ const UploadProductScreen = () => {
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
+      base64: true
     });
 
-    console.log(result);
-
     if (!result.canceled) {
+      // RNFS.readFile(result.assets[0].uri, 'base64').then((res) => {
+      //   console.log(res)
+      // })
       setImage(result.assets[0].uri);
+      console.log(result.assets[0].uri);
     }
   };
 
@@ -41,28 +44,36 @@ const UploadProductScreen = () => {
       Alert.alert("Error", "Please fill in all fields and select an image");
       return;
     }
+    console.log(base64Image)
 
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("category", category);
-    formData.append("price", parseFloat(price));
-    formData.append("image", {
-      uri: "https://variety.com/wp-content/uploads/2021/04/Avatar.jpg?w=800&h=533&crop=1&resize=681%2C454",
-      name: "product_image.jpg",
-      type: "image/jpeg",
-    });
     try {
+      const token = await AsyncStorage.getItem("token");
+      // console.log(token)
       const response = await axios.post(
         "http://10.4.6.44:8080/vendor/create",
-        formData,
+        {
+          name: name,
+          category: category,
+          price: 5456,
+          type: "PRODUCT",
+          description: "Lorwersjef",
+          available: true,
+          availableTime: "Monday",
+          image: base64Image,
+          // {
+          //   // uri: "https://variety.com/wp-content/uploads/2021/04/Avatar.jpg?w=800&h=533&crop=1&resize=681%2C454",
+          //   // name: "product_image.jpg",
+          //   // type: "image/jpeg",
+          // }
+        },
         {
           headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${AsyncStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
           },
         }
       );
-      if (response.status === 201) {
+      if (response.status === 200) {
         Alert.alert("Success", "Product uploaded successfully");
         setName("");
         setCategory("");

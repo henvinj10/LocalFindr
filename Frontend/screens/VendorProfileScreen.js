@@ -8,8 +8,40 @@ import {
   Dimensions,
 } from "react-native";
 import CustomButton from "../components/Button";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const VendorProfileScreen = () => {
+const VendorProfileScreen = ({ navigation }) => {
+  const handleLogout = () => {
+    AsyncStorage.removeItem("token");
+    navigation.replace("Login");
+    // product.color = selectedColor;
+    // product.size = selectedSize;
+    // // Add the product to the cart logic here
+    // navigation.navigate("CART");
+  };
+  const fetchData = async () => {
+    try {
+      const response = await fetch("http://10.4.6.44:8080/search", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${AsyncStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          section: selectedSection.value,
+          searchTerm: search.value,
+          locality: localBody.value,
+        }),
+      });
+      const result = await response.json();
+      console.log(result);
+      setData(result);
+      // navigation.navigate("SearchScreen", { data: result });
+    } catch (error) {
+      Alert.alert("Error", "Something went wrong while fetching data");
+      console.error(error);
+    }
+  };
   return (
     <View style={styles.container}>
       <View style={styles.card}>
@@ -34,15 +66,11 @@ const VendorProfileScreen = () => {
         <View style={styles.buttons}>
           <CustomButton
             label="Manage Inventory"
-            onPress={() => setView("inventory")}
-          />
-          <CustomButton
-            label="View Products in Shop"
-            onPress={() => setView("products")}
+            handlePress={fetchData}
           />
           <CustomButton
             label="Logout"
-            handlePress={() => Alert.alert("Edit Profile")}
+            handlePress={handleLogout}
           />
         </View>
       </View>

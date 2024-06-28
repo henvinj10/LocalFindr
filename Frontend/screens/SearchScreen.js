@@ -1,60 +1,43 @@
-import {
-  BackHandler,
-  FlatList,
-  Image,
-  ImageBackground,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
-import React, { useState } from "react";
+import React from "react";
+import { BackHandler, FlatList, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Header from "../components/Header";
 import Tags from "../components/Tags";
 import ProductCard from "../components/ProductCard";
-import data from "../constants/data.json";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import colors from "../constants/Colors";
+import data from "../constants/data.json"; // Assuming this is where you import your data
 
-const SearchScreen = ({ navigation }) => {
-  const backNavigation = useNavigation();
-  const [products, setProducts] = useState(data.products);
+const SearchScreen = ({ route }) => {
+  const { data: products } = route.params; // Assuming you pass data as route params
 
-  const handleProductDetails = (item) => {
-    navigation.navigate("ProductDetails", { item });
-  };
+  const navigation = useNavigation();
 
   const toggleFavorite = (item) => {
-    setProducts(
-      products.map((prod) => {
-        if (prod.id === item.id) {
-          return {
-            ...prod,
-            isFavorite: !prod.isFavorite,
-          };
-        }
-        return prod;
-      })
-    );
-  };
-
-  const handleBack = () => {
-    backNavigation.reset({
-      index: 0,
-      routes: [{ name: "UserHomeTabs" }],
-    });
-    return true;
+    // Your favorite toggle logic here
   };
 
   useFocusEffect(
     React.useCallback(() => {
+      const handleBack = () => {
+        navigation.goBack();
+        return true;
+      };
+
       BackHandler.addEventListener("hardwareBackPress", handleBack);
 
       return () => {
         BackHandler.removeEventListener("hardwareBackPress", handleBack);
       };
     }, [navigation])
+  );
+
+  const renderProduct = ({ item }) => (
+    <ProductCard
+      item={item}
+      toggleFavorite={toggleFavorite}
+      onPress={() => navigation.navigate("ProductDetails", { productId: item.offeringID })}
+    />
   );
 
   return (
@@ -65,23 +48,15 @@ const SearchScreen = ({ navigation }) => {
       <FlatList
         ListHeaderComponent={
           <>
-            <Header handleBack={handleBack} />
-            <View style={styles.inputContainer}>
-              <TextInput placeholder="Search" style={styles.textInput} />
-            </View>
+            <Header handleBack={() => navigation.goBack()} />
             <Tags />
           </>
         }
         data={products}
         numColumns={2}
-        renderItem={({ item }) => (
-          <ProductCard
-            item={item}
-            handleProductClick={() => handleProductDetails(item)}
-            toggleFavorite={() => toggleFavorite(item)}
-          />
-        )}
+        renderItem={renderProduct}
         showsVerticalScrollIndicator={false}
+        keyExtractor={(item) => item.offeringID.toString()}
       />
     </LinearGradient>
   );
@@ -94,17 +69,5 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: colors.backgroundColor,
-  },
-  inputContainer: {
-    width: "100%",
-    backgroundColor: "#FFFFFF",
-    height: 48,
-    borderRadius: 12,
-    alignItems: "center",
-    flexDirection: "row",
-  },
-  textInput: {
-    fontSize: 18,
-    flex: 1,
   },
 });
