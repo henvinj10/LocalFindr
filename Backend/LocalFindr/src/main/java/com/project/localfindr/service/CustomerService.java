@@ -59,11 +59,7 @@ public class CustomerService {
     }
 
     public DeleteResponseDTO delete(int offeringID, HttpServletRequest request) {
-
-        WishlistEntity wishlistEntity = new WishlistEntity();
-        wishlistEntity.setOfferingID(offeringID);
-        wishlistEntity.setEmail(getEmail(request));
-        wishlistRepository.delete(wishlistEntity);
+        wishlistRepository.deleteByEmailAndOfferingId(getEmail(request), (long) offeringID);
         DeleteResponseDTO deleteResponseDTO = new DeleteResponseDTO();
         deleteResponseDTO.setMessage("Deleted from wishlist successfully");
         return deleteResponseDTO;
