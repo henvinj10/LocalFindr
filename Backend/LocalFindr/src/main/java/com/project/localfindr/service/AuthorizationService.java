@@ -7,6 +7,8 @@ import com.project.localfindr.utility.JwtUtil;
 import com.project.localfindr.utility.MapperUtility;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +30,7 @@ public class AuthorizationService {
     private JwtUtil jwtUtil;
 
 
-    public RegisterResponseDTO registerUser(RegisterDTO registerDTO) {
+    public ResponseEntity<RegisterResponseDTO> registerUser(RegisterDTO registerDTO) {
         RegisterEntity registerEntity = mapperUtility.toRegisterEntity(registerDTO);
         RegisterResponseDTO registerResponseDTO = new RegisterResponseDTO();
         RegisterEntity registerEntityCheck = authorizationRepository.findByEmail(registerEntity.getEmail());
@@ -38,13 +40,13 @@ public class AuthorizationService {
             RegisterEntity registerEntityOut = authorizationRepository.save(registerEntity);
             if(Objects.equals(registerEntityOut.getEmail(), registerEntity.getEmail())) {
                 registerResponseDTO.setMessage("User Registered Successfully");
-                return registerResponseDTO;
+                return new ResponseEntity<>(registerResponseDTO, HttpStatus.OK);
             }
-            registerResponseDTO.setMessage("User Registeration was Unsuccessfully");
-            return registerResponseDTO;
+            registerResponseDTO.setMessage("User Couldn't register");
+            return new ResponseEntity<>(registerResponseDTO, HttpStatus.BAD_REQUEST);
         }
         registerResponseDTO.setMessage("Email already exist");
-        return registerResponseDTO;
+        return new ResponseEntity<>(registerResponseDTO, HttpStatus.CONFLICT);
     }
 
     public LoginResponseDTO authenticateUser(LoginDTO loginDTO) {

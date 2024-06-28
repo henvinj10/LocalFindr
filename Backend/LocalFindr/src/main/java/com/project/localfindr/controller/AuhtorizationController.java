@@ -5,6 +5,7 @@ import com.project.localfindr.service.AuthorizationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +18,7 @@ public class AuhtorizationController {
     private AuthorizationService authorizationService;
 
     @PostMapping("/register")
-    public RegisterResponseDTO registerUser(@RequestBody RegisterDTO registerDTO) {
+    public ResponseEntity<RegisterResponseDTO> registerUser(@RequestBody RegisterDTO registerDTO) {
         return authorizationService.registerUser(registerDTO);
     }
 
