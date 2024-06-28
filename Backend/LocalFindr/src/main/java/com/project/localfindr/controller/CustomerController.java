@@ -4,11 +4,13 @@ import com.project.localfindr.model.DTO.*;
 import com.project.localfindr.service.CustomerService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@Validated
 @RequestMapping("/customer")
 public class CustomerController {
 

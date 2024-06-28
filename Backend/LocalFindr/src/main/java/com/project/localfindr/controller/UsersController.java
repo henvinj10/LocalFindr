@@ -5,9 +5,11 @@ import com.project.localfindr.model.DTO.ProfileDTO;
 import com.project.localfindr.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@Validated
 @RequestMapping("/user")
 public class UsersController {
 

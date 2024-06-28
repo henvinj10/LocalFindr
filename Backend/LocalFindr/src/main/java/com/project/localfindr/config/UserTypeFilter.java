@@ -12,7 +12,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
-@Order(1) // Filter order if you have multiple filters
+@Order(1)// Filter order if you have multiple filters
 public class UserTypeFilter extends OncePerRequestFilter {
 
 
