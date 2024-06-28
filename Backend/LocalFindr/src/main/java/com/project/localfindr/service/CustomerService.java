@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,6 +50,13 @@ public class CustomerService {
 
     public SaveResponseDTO save(int offeringID, HttpServletRequest request) {
 
+        Optional<WishlistEntity> existingItem = wishlistRepository.findByEmailAndOfferingID(
+                getEmail(request), (long) offeringID);
+        if (existingItem.isPresent()) {
+            SaveResponseDTO saveResponseDTO = new SaveResponseDTO();
+            saveResponseDTO.setMessage("Item Already in wishlist");
+            return saveResponseDTO;
+        }
         WishlistEntity wishlistEntity = new WishlistEntity();
         wishlistEntity.setOfferingID(offeringID);
         wishlistEntity.setEmail(getEmail(request));
