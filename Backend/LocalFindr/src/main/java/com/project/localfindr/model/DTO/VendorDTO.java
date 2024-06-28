@@ -14,6 +14,6 @@ public class VendorDTO {
     private String description;
     private double price;
     private byte[] image;
-    private boolean isAvailable;
+    private boolean available;
     private String availableTime;
 }

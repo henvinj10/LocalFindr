@@ -1,0 +1,642 @@
+openapi: 3.0.1
+info:
+  title: LocalFindr API
+  description: API documentation for LocalFindr application
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: abc@email.com
+                password:
+                  type: string
+                  example: "12345"
+                userType:
+                  type: string
+                  enum: [VENDOR, CUSTOMER]
+                address:
+                  type: object
+                  properties:
+                    buildingInfo:
+                      type: string
+                      example: 123xx
+                    streetName:
+                      type: string
+                      example: xxxstreet
+                    localBody:
+                      type: string
+                      example: Koratty
+                    city:
+                      type: string
+                      example: Chalakudy
+                    district:
+                      type: string
+                      example: Thrissur
+                    state:
+                      type: string
+                      example: Kerala
+                    country:
+                      type: string
+                      example: India
+                    gmapLink:
+                      type: string
+                      example: map.google.com
+      responses:
+        '200':
+          description: User Registered Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User Registered Successfully
+        '400':
+          description: Registration Unsuccessful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User Registration was Unsuccessful
+        '409':
+          description: Email already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Email already exist
+
+  /auth/login:
+    post:
+      summary: Login a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: abc@email.com
+                password:
+                  type: string
+                  example: "12345"
+      responses:
+        '200':
+          description: User logged in successfully
+          headers:
+            Authorization:
+              schema:
+                type: string
+                example: Bearer xxxxxxxxx
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User logged in Successfully
+                  token:
+                    type: string
+                    example: xxxxxxxxx
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User not found
+                  token:
+                    type: string
+                    example: null
+        '401':
+          description: Password doesn't match
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Password doesn't match
+                  token:
+                    type: string
+                    example: null
+
+  /auth/logout:
+    post:
+      summary: Logout a user
+      responses:
+        '200':
+          description: User logged out successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User logged out Successfully
+
+  /user/profile:
+    get:
+      summary: Get user profile
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email:
+                    type: string
+                    format: email
+                  userType:
+                    type: string
+                    enum: [VENDOR, CUSTOMER]
+                  address:
+                    type: object
+                    properties:
+                      buildingInfo:
+                        type: string
+                      streetName:
+                        type: string
+                      localBody:
+                        type: string
+                      city:
+                        type: string
+                      district:
+                        type: string
+                      state:
+                        type: string
+                      country:
+                        type: string
+                      gmapLink:
+                        type: string
+        '404':
+          description: User profile not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: ObjectNotFoundException
+
+  /users/update:
+    put:
+      summary: Update user profile
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                buildingInfo:
+                  type: string
+                streetName:
+                  type: string
+                localBody:
+                  type: string
+                city:
+                  type: string
+                district:
+                  type: string
+                state:
+                  type: string
+                country:
+                  type: string
+                gmapLink:
+                  type: string
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User updated successfully
+        '404':
+          description: User profile not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: ObjectNotFoundException
+
+  /vendors/create:
+    post:
+      summary: Create vendor offerings
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Cake
+                type:
+                  type: string
+                  enum: [Product, Service]
+                category:
+                  type: string
+                  example: Food
+                description:
+                  type: string
+                  example: Good delicious cake
+                price:
+                  type: number
+                  example: 750
+                image:
+                  type: string
+                  format: byte
+                  example: aGVsbG93b3JsZA== # base64 encoded string
+                available:
+                  type: boolean
+                availableTime:
+                  type: string
+                  example: 9AMTo7PM
+      responses:
+        '200':
+          description: Offerings created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Item created
+              
+  /vendors/update:
+    put:
+      summary: Update vendor offerings
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                offeringID:
+                  type: integer
+                  example: 1
+                name:
+                  type: string
+                  example: Chocolate
+                type:
+                  type: string
+                  enum: [Product, Service]
+                category:
+                  type: string
+                  example: Food
+                description:
+                  type: string
+                  example: Good Chocolate
+                price:
+                  type: number
+                  example: 120
+                image:
+                  type: string
+                  format: byte
+                  example: aGVsbG93b3JsZA== # base64 encoded string
+                isAvailable:
+                  type: boolean
+                availableTime:
+                  type: string
+                  example: 6AMTO10PM
+      responses:
+        '200':
+          description: Offerings updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: item updated
+              
+  /vendors/delete/{offeringID}:
+    delete:
+      summary: Delete vendor offerings
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: offeringID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Offerings deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: item deleted
+
+  /vendors/all:
+    get:
+      summary: Get all vendor offerings
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of all offerings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    offeringID:
+                      type: integer
+                      example: 1
+                    name:
+                      type: string
+                      example: Chocolate
+                    type:
+                      type: string
+                      enum: [Product, Service]
+                    category:
+                      type: string
+                      example: Food
+                    description:
+                      type: string
+                      example: Good Chocolate
+                    price:
+                      type: number
+                      example: 120
+                    image:
+                      type: string
+                      format: byte
+                      example: aGVsbG93b3JsZA== # base64 encoded string
+                    isAvailable:
+                      type: boolean
+                    availableTime:
+                      type: string
+                      example: 6AMTO10PM
+  /customer/search:
+    get:
+      summary: Search offerings
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: name
+          schema:
+            type: string
+          example: ghgvy
+        - in: query
+          name: type
+          schema:
+            type: string
+            enum: [Product, Service]
+          example: Product
+        - in: query
+          name: category
+          schema:
+            type: string
+          example: bhujgb
+        - in: query
+          name: price
+          schema:
+            type: number
+          example: 67876
+        - in: query
+          name: streetName
+          schema:
+            type: string
+          example: xxxstreet
+        - in: query
+          name: localBody
+          schema:
+            type: string
+          example: ghfvill
+        - in: query
+          name: city
+          schema:
+            type: string
+          example: cityy
+      responses:
+        '200':
+          description: List of search results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    offeringID:
+                      type: integer
+                      example: 2
+                    name:
+                      type: string
+                      example: cake
+                    type:
+                      type: string
+                      enum: [Product, Service]
+                    category:
+                      type: string
+                      example: Food
+                    description:
+                      type: string
+                      example: Good food
+                    price:
+                      type: number
+                      example: 750
+                    image:
+                      type: string
+                      format: byte
+                      example: aGVsbG93b3JsZA== # base64 encoded string
+                    isAvailable:
+                      type: boolean
+                    availableTime:
+                      type: string
+                      example: 9AMTO10PM
+                    address:
+                      type: object
+                      properties:
+                        buildingInfo:
+                          type: string
+                        streetName:
+                          type: string
+                        localBody:
+                          type: string
+                        city:
+                          type: string
+                        district:
+                          type: string
+                        state:
+                          type: string
+                        country:
+                          type: string
+                        gmapLink:
+                          type: string
+
+  /customer/save/{offeringID}:
+    post:
+      summary: Add offering to wishlist
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: offeringID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Added to wishlist successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Added to wishlist successfully
+
+  /customer/delete/{offeringID}:
+    delete:
+      summary: Delete offering from wishlist
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: offeringID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Deleted from wishlist successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Deleted from wishlist successfully
+
+  /customer/wishlist:
+    get:
+      summary: Get wishlist items
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of wishlist items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    offeringID:
+                      type: integer
+                      example: 2
+                    name:
+                      type: string
+                      example: cake
+                    type:
+                      type: string
+                      enum: [Product, Service]
+                    category:
+                      type: string
+                      example: food
+                    description:
+                      type: string
+                      example: Good food
+                    price:
+                      type: number
+                      example: 750
+                    image:
+                      type: string
+                      format: byte
+                      example: aGVsbG93b3JsZA== # base64 encoded string
+                    isAvailable:
+                      type: boolean
+                    availableTime:
+                      type: string
+                      example: 9AmTO10PM
+                    address:
+                      type: object
+                      properties:
+                        buildingInfo:
+                          type: string
+                        streetName:
+                          type: string
+                        localBody:
+                          type: string
+                        city:
+                          type: string
+                        district:
+                          type: string
+                        state:
+                          type: string
+                        country:
+                          type: string
+                        gmapLink:
+                          type: string
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
