@@ -34,11 +34,17 @@ public class CustomerService {
 
     public List<SearchResponseDTO> search(HttpServletRequest request, SearchDTO searchDTO) {
         // Fetch data from the database based on search criteria
+        Double price;
+        if(searchDTO.getPrice() == 0.0){
+            price = null;
+        }else{
+            price = searchDTO.getPrice();
+        }
         List<OfferingEntity> offerings = offeringRepository.findByCriteria(
                 searchDTO.getName(),
                 searchDTO.getType(),
                 searchDTO.getCategory(),
-                searchDTO.getPrice(),
+                price,
                 searchDTO.getStreetName(),
                 searchDTO.getLocalBody(),
                 searchDTO.getCity()
