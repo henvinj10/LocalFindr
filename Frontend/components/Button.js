@@ -1,20 +1,25 @@
-import { Pressable, StyleSheet, Text } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import React from "react";
 
 const CustomButton = ({ label, handlePress, color }) => {
   return (
-    <Pressable
-      onPress={handlePress}
-      style={[styles.button, color && { backgroundColor: color }]}
-    >
-      <Text style={styles.text}>{label}</Text>
-    </Pressable>
+    <View style={styles.container}>
+      <Pressable
+        onPress={handlePress}
+        style={[styles.button, color && { backgroundColor: color }]}
+      >
+        <Text style={styles.text}>{label}</Text>
+      </Pressable>
+    </View>
   );
 };
 
 export default CustomButton;
 
 const styles = StyleSheet.create({
+  container: {
+    marginBottom: 20,
+  },
   text: {
     fontSize: 16,
     lineHeight: 21,

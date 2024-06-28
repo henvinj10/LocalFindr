@@ -54,7 +54,7 @@ const RegistrationScreen = ({ navigation }) => {
     valid: false,
     error: null,
   });
-  const [villageOrMunicipality, setVillageOrMunicipality] = useState({
+  const [localBody, setlocalBody] = useState({
     value: "",
     valid: false,
     error: null,
@@ -193,16 +193,16 @@ const RegistrationScreen = ({ navigation }) => {
     setStreetName({ value: text, valid: true, error: null });
   };
 
-  handleVillageOrMunicipalityChange = (text) => {
+  handlelocalBodyChange = (text) => {
     if (isEmpty(text)) {
-      setVillageOrMunicipality({
+      setlocalBody({
         value: text,
         valid: false,
         error: "Please enter a valid village or municipality",
       });
       return;
     }
-    setVillageOrMunicipality({ value: text, valid: true, error: null });
+    setlocalBody({ value: text, valid: true, error: null });
   };
 
   handleCityChange = (text) => {
@@ -270,21 +270,22 @@ const RegistrationScreen = ({ navigation }) => {
     console.log(password.value);
     console.log(userType.value);
     if (email.valid && password.valid && userType.value === "CUSTOMER") {
+      console.log("Customer registration");
       registerCustomer();
-      if (
-        userType.value === "VENDOR" &&
-        confirmPassword.valid &&
-        buildingInfo.valid &&
-        streetName.valid &&
-        villageOrMunicipality.valid &&
-        city.valid &&
-        district.valid &&
-        state.valid &&
-        country.valid &&
-        gMapLink.valid
-      ) {
-        registerVendor();
-      }
+    } else if (
+      userType.value === "VENDOR" &&
+      confirmPassword.valid &&
+      buildingInfo.valid &&
+      streetName.valid &&
+      localBody.valid &&
+      city.valid &&
+      district.valid &&
+      state.valid &&
+      country.valid &&
+      gMapLink.valid
+    ) {
+      console.log("Vendor registration");
+      registerVendor();
     } else {
       Alert.alert("Incorrect data", "Please check your inputs");
     }
@@ -292,8 +293,8 @@ const RegistrationScreen = ({ navigation }) => {
 
   registerCustomer = async () => {
     try {
+      // const response = await axios.post(`http://10.4.6.44:8080/auth/register`
       const response = await axios.post(`http://10.4.6.44:8080/auth/register`, {
-        // username: name.value,
         email: email.value,
         password: password.value,
         userType: userType.value,
@@ -316,7 +317,7 @@ const RegistrationScreen = ({ navigation }) => {
         //   text1: error.response.data.message,
         //   position: "bottom",
         // });
-        console.log("error");
+        // console.log(error.response);
       } else {
         // Toast.show({
         //   type: "error",
@@ -337,12 +338,12 @@ const RegistrationScreen = ({ navigation }) => {
         address: {
           buildingInfo: buildingInfo.value,
           streetName: streetName.value,
-          villageOrMunicipality: villageOrMunicipality.value,
+          localBody: localBody.value,
           city: city.value,
           district: district.value,
           state: state.value,
           country: country.value,
-          gMapLink: gMapLink.value,
+          gmapLink: gMapLink.value,
         },
       });
 
@@ -362,7 +363,7 @@ const RegistrationScreen = ({ navigation }) => {
           text1: error.response.data.message,
           position: "bottom",
         });
-        console.log("error");
+        console.log(error.response);
       } else {
         Toast.show({
           type: "error",
@@ -445,9 +446,9 @@ const RegistrationScreen = ({ navigation }) => {
               <TextInputField
                 label="Village or Municipality"
                 placeholder="Enter village or municipality"
-                value={villageOrMunicipality.value}
-                onChangeText={handleVillageOrMunicipalityChange}
-                errorMessage={villageOrMunicipality.error}
+                value={localBody.value}
+                onChangeText={handlelocalBodyChange}
+                errorMessage={localBody.error}
               />
               <TextInputField
                 label="City"

@@ -15,6 +15,9 @@ import TextInputField from "../components/TextInputField";
 import colors from "../constants/Colors";
 import CustomButton from "../components/Button";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+import "core-js/stable/atob";
 
 const LoginScreen = ({ navigation }) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -29,7 +32,7 @@ const LoginScreen = ({ navigation }) => {
   const API_BASE_URL = "your_api_base_url_here";
 
   const handleLogin = () => {
-    console.log(AsyncStorage.getItem("token"));
+    // console.log(AsyncStorage.getItem("token"));
     if (email.valid && password.valid) {
       userLogin();
     } else {
@@ -40,28 +43,25 @@ const LoginScreen = ({ navigation }) => {
   const userLogin = async () => {
     try {
       // Example login API request (adjust to your API structure)
-      const response = await fetch(`http://10.4.6.44:8080/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email.value,
-          password: password.value,
-        }),
+      const response = await axios.post(`http://10.4.6.44:8080/auth/login`, {
+        email: email.value,
+        password: password.value,
       });
-      if (!response.ok) {
-        throw new Error("Login failed");
-      }
-      const token = await response.json();
-      // Store token using AsyncStorage or other storage method
-      Example: AsyncStorage.setItem("token", token);
+      // const profileData = await response.json();
+      // console.log();
+      const token = response.data.token;
+      // // Store token using AsyncStorage or other storage method
+      AsyncStorage.setItem("token", token);
 
-      // Example Toast message (adjust as needed)
-      Alert.alert("Login Successful", "Welcome!");
-      console.log(response);
+      // // Example Toast message (adjust as needed)
+      // Alert.alert("Login Successful", "Welcome!");
+      // console.log(response);
       setTimeout(() => {
-        navigation.replace("Main");
+        if (jwtDecode(token).userType === "CUSTOMER") {
+          navigation.replace("UserHomeTabs");
+        } else {
+          navigation.replace("VendorHomeTabs");
+        }
       }, 1000);
     } catch (error) {
       Alert.alert("Error", error.message || "Login failed");

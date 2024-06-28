@@ -14,6 +14,7 @@ import VendorHomeScreen from "../screens/VendorHomeScreen";
 import VendorProfileScreen from "../screens/VendorProfileScreen";
 import { Image } from "react-native";
 import UserHomeScreen from "../screens/UserHomeScreen";
+import ProductDetailsScreen from "../screens/ProductDetailsScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -37,13 +38,13 @@ const getTabBarIcon = (route, color, size) => {
 
   switch (route.name) {
     case Routes.Home:
-      iconName = "home";
+      iconName = "home-outline";
       break;
     case Routes.Profile:
-      iconName = "person";
+      iconName = "person-outline";
       break;
     case Routes.Settings:
-      iconName = "settings";
+      iconName = "settings-outline";
       break;
     default:
       iconName = "help";
@@ -60,8 +61,8 @@ function VendorBottomTabNavigator() {
       screenOptions={({ route }) => ({
         tabBarHideOnKeyboard: true,
         tabBarIcon: ({ color, size }) => getTabBarIcon(route, color, size),
-        tabBarActiveTintColor: colors.primaryColor,
-        tabBarBackgroundColor: colors.primaryColor,
+        tabBarActiveTintColor: "white",
+        tabBarInactiveTintColor: "black",
         headerTitle: () => (
           <Image
             source={require("../assets/tab-bar.png")}
@@ -73,6 +74,16 @@ function VendorBottomTabNavigator() {
           />
         ),
         headerTitleAlign: "center",
+        tabBarStyle: {
+          backgroundColor: "#EE0F37",
+          elevation: 0,
+          marginHorizontal: 30,
+          marginBottom: 20,
+          borderRadius: 30,
+          height: 60,
+          paddingTop: 10,
+          paddingBottom: 10,
+        },
       })}
     >
       <Tab.Screen name={Routes.Home} component={VendorHomeScreen} />
@@ -89,8 +100,8 @@ function UserBottomTabNavigator() {
       screenOptions={({ route }) => ({
         tabBarHideOnKeyboard: true,
         tabBarIcon: ({ color, size }) => getTabBarIcon(route, color, size),
-        tabBarActiveTintColor: colors.primaryColor,
-        tabBarBackgroundColor: colors.primaryColor,
+        tabBarActiveTintColor: "white",
+        tabBarInactiveTintColor: "black",
         headerTitle: () => (
           <Image
             source={require("../assets/tab-bar.png")}
@@ -102,6 +113,18 @@ function UserBottomTabNavigator() {
           />
         ),
         headerTitleAlign: "center",
+        tabBarStyle: {
+          backgroundColor: "#EE0F37",
+          borderTopWidth: 0,
+          elevation: 0,
+          marginHorizontal: 30,
+          marginBottom: 20,
+          borderRadius: 30,
+          height: 60,
+          paddingBottom: 10,
+          paddingTop: 10,
+          position: "absolute",
+        },
       })}
     >
       <Tab.Screen name={Routes.Home} component={UserHomeScreen} />
@@ -114,15 +137,15 @@ function UserBottomTabNavigator() {
 function StackNavigator() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={Routes.Splash}>
+      <Stack.Navigator initialRouteName={"Splash"}>
         <Stack.Screen
           name={Routes.Splash}
           component={SplashScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name={Routes.Start}
-          component={SplashScreen}
+          name={"ProductDetails"}
+          component={ProductDetailsScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
@@ -149,9 +172,9 @@ function StackNavigator() {
           name={Routes.Search}
           component={SearchScreen}
           options={{ headerShown: false }}
-          sharedElements={(route) => {
-            return [{ id: "searchIcon" }];
-          }}
+          // sharedElements={(route) => {
+          //   return [{ id: "searchIcon" }];
+          // }}
         />
       </Stack.Navigator>
     </NavigationContainer>

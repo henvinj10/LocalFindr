@@ -13,7 +13,7 @@ const TextInputField = ({
   toggleVisibility,
 }) => {
   return (
-    <View>
+    <View style={styles.container}>
       <View
         style={[styles.inputContainer, error && styles.errorInputContainer]}
       >
@@ -46,6 +46,9 @@ const TextInputField = ({
 export default TextInputField;
 
 const styles = StyleSheet.create({
+  container: {
+    marginBottom: 30,
+  },
   inputContainer: {
     width: "100%",
     padding: 5,
@@ -55,7 +58,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#e7e2e2", // Dark background color
     borderRadius: 6,
     elevation: 5,
-    marginBottom: 30,
   },
   errorInputContainer: {
     borderWidth: 1,

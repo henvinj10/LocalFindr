@@ -2,18 +2,18 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  TextInput,
-  Button,
   StyleSheet,
   Alert,
   Image,
   Pressable,
+  ScrollView,
 } from "react-native";
 import axios from "axios";
 import * as ImagePicker from "expo-image-picker";
 import colors from "../constants/Colors";
 import CustomButton from "../components/Button";
 import TextInputField from "../components/TextInputField";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const UploadProductScreen = () => {
   const [name, setName] = useState("");
@@ -47,18 +47,18 @@ const UploadProductScreen = () => {
     formData.append("category", category);
     formData.append("price", parseFloat(price));
     formData.append("image", {
-      uri: image.uri,
+      uri: "https://variety.com/wp-content/uploads/2021/04/Avatar.jpg?w=800&h=533&crop=1&resize=681%2C454",
       name: "product_image.jpg",
       type: "image/jpeg",
     });
-
     try {
       const response = await axios.post(
-        "http://your-server-url.com/products",
+        "http://10.4.6.44:8080/vendor/create",
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${AsyncStorage.getItem("token")}`,
           },
         }
       );
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    marginTop: 25,
+    marginTop: 50,
   },
 });
 

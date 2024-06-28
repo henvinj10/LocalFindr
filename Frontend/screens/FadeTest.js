@@ -16,16 +16,23 @@ import { EvilIcons } from "@expo/vector-icons";
 import { SelectList } from "react-native-dropdown-select-list";
 import colors from "../constants/Colors";
 import TextInputField from "../components/TextInputField";
-import { isEmpty } from "../utils/Validations";
-import SearchScreen from "./SearchScreen";
-import { ScrollView } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  hasAtLeastOneDigit,
+  hasAtLeastOneLowercase,
+  hasAtLeastOneSpecialChar,
+  hasAtLeastOneUppercase,
+  isAtLeast8Characters,
+  isEmpty,
+  isValidEmail,
+} from "../utils/Validations";
+import HomeScreen from "./UserHomeScreen";
+import UserHomeScreen from "./UserHomeScreen";
 
-const UserHomeScreen = ({ navigation }) => {
+const FadeTest = ({ navigation }) => {
   const [selectedSection, setSelectedSection] = useState({
     value: "",
   });
-  // const logoOpacity = useSharedValue(0); // Shared value for logo opacity
+  const logoOpacity = useSharedValue(0); // Shared value for logo opacity
   const [search, setsearch] = useState({
     value: "",
     valid: false,
@@ -83,33 +90,15 @@ const UserHomeScreen = ({ navigation }) => {
         exiting={FadeOut.duration(400)}
         style={{ flex: 1, height: "100%" }}
       >
-        <SearchScreen />
+        <UserHomeScreen />
       </Animated.View>
     );
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <View style={styles.container}>
       <Text style={styles.title}>What are you looking for?</Text>
-      <View style={styles.form}>
-        <TextInputField
-          value={search.value}
-          onChangeText={handlesearchChange}
-          placeholder="Search Term"
-          error={search.error}
-          autoCapitalize="none"
-          keyboardType="default"
-        />
-        <TextInputField
-          value={localBody.value}
-          onChangeText={handlelocalBodyChange}
-          placeholder="Locality"
-          error={localBody.error}
-          autoCapitalize="none"
-          keyboardType="default"
-        />
-        {/* 
-        <View style={styles.searchContainer}> */}
+      <View style={styles.searchContainer}>
         <View style={styles.searchBar}>
           <SelectList
             setSelected={(val) => handleSectionSelect(val)}
@@ -118,57 +107,24 @@ const UserHomeScreen = ({ navigation }) => {
             placeholder="Choose a section"
           />
         </View>
-        <TextInputField
-          value={localBody.value}
-          onChangeText={handlelocalBodyChange}
-          placeholder="Locality"
-          error={localBody.error}
-          autoCapitalize="none"
-          keyboardType="default"
-        />
-        <TextInputField
-          value={localBody.value}
-          onChangeText={handlelocalBodyChange}
-          placeholder="Locality"
-          error={localBody.error}
-          autoCapitalize="none"
-          keyboardType="default"
-        />
-        <TextInputField
-          value={localBody.value}
-          onChangeText={handlelocalBodyChange}
-          placeholder="Locality"
-          error={localBody.error}
-          autoCapitalize="none"
-          keyboardType="default"
-        />
-        <TextInputField
-          value={localBody.value}
-          onChangeText={handlelocalBodyChange}
-          placeholder="Locality"
-          error={localBody.error}
-          autoCapitalize="none"
-          keyboardType="default"
-        />
-        <TextInputField
-          value={localBody.value}
-          onChangeText={handlelocalBodyChange}
-          placeholder="Locality"
-          error={localBody.error}
-          autoCapitalize="none"
-          keyboardType="default"
-        />
-        <TextInputField
-          value={localBody.value}
-          onChangeText={handlelocalBodyChange}
-          placeholder="Locality"
-          error={localBody.error}
-          autoCapitalize="none"
-          keyboardType="default"
-        />
       </View>
-      {/* </View>
-      </View> */}
+      <TextInputField
+        value={search.value}
+        onChangeText={handlesearchChange}
+        placeholder="Search Term"
+        error={search.error}
+        autoCapitalize="none"
+        keyboardType="default"
+      />
+      <TextInputField
+        value={localBody.value}
+        onChangeText={handlelocalBodyChange}
+        placeholder="Locality"
+        error={localBody.error}
+        autoCapitalize="none"
+        keyboardType="default"
+      />
+
       {/* Logo to fade in/out */}
       {selectedSection.value && search.value && localBody.value && (
         <Animated.View
@@ -185,14 +141,15 @@ const UserHomeScreen = ({ navigation }) => {
           </Pressable>
         </Animated.View>
       )}
-    </ScrollView>
+    </View>
   );
 };
 
-export default UserHomeScreen;
+export default FadeTest;
 
 const styles = StyleSheet.create({
   container: {
+    // flex: 1,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.backgroundColor,
@@ -201,11 +158,14 @@ const styles = StyleSheet.create({
   appDrawerIcon: {
     height: 100,
     resizeMode: "contain",
-    marginBottom: 100,
+    marginTop: 30,
   },
-  form: {
-    width: "100%",
-    marginBottom: 30,
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    // marginBottom: 20,
+    width: Dimensions.get("screen").width,
+    padding: 20,
   },
   title: {
     fontSize: 24,
@@ -213,12 +173,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   searchBar: {
-    marginBottom: 30,
-    //   // height: 150,
-    //   width: "100%",
-    //   borderRadius: 5,
-    //   // paddingHorizontal: 10,
-    //   // marginLeft: 10,
-    //   justifyContent: "center",
+    height: 150,
+    width: "100%",
+    borderRadius: 5,
+    // paddingHorizontal: 10,
+    // marginLeft: 10,
+    justifyContent: "center",
   },
 });
