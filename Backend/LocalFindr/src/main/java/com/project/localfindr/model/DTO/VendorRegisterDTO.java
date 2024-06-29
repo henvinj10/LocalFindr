@@ -10,7 +10,7 @@ public class VendorRegisterDTO {
     String category;
     String description;
     double price;
-    byte[] image;
+    String image;
     boolean available;
     String availableTime;
 }

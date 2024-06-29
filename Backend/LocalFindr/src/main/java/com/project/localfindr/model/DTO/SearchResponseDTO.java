@@ -12,7 +12,7 @@ public class SearchResponseDTO {
     private String category;
     private String description;
     private Double price;
-    private byte[] image;
+    private String image;
     private Boolean isAvailable;
     private String availableTime;
     private Address address;

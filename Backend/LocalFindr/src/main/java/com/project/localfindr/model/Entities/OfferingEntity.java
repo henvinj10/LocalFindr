@@ -28,7 +28,7 @@ public class OfferingEntity {
     private String category;
     private String description;
     private double price;
-    private byte[] image;
+    private String image;
     @Column(name = "is_available")
     private boolean isAvailable;
     @Column(name = "available_time")
