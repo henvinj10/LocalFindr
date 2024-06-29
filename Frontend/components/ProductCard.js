@@ -1,40 +1,155 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
-import fonts from "../constants/Fonts";
+import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useState, useEffect } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { EvilIcons } from "@expo/vector-icons";
+import CustomButton from "./Button";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import jwtDecode from "jwt-decode"; // Ensure jwt-decode is installed and imported
 
-// const ProductCard = ({ item, handleProductClick, toggleFavorite }) => {
-const ProductCard = ({ item }) => {
+const ProductCard = ({ item, isFavorite, icon }) => {
+  const [email, setEmail] = useState(null);
+  const [isAvailable, setIsAvailable] = useState(item.available);
+  const navigation = useNavigation();
+  console.log("Item:", item);
+
+  useEffect(() => {
+    setIsAvailable(item.available);
+  }, [item.available]);
+
+  const handleProductClick = (item) => {
+    navigation.navigate("ProductDetails", { item });
+  };
+
+  const toggleFavorite = (item) => {
+    if (isFavorite) {
+      removeFavorite(item);
+    } else {
+      addFavorite(item);
+    }
+  };
+
+  const addFavorite = async (item) => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (token) {
+        setEmail(jwtDecode(token).email);
+        const response = await axios.post(
+          `http://10.4.6.44:8080/customer/save/${item.offeringID}`,
+          {},
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`,
+            },
+          }
+        );
+        if (response.status === 200) {
+          console.log('Favorite status toggled successfully');
+        } else {
+          console.error('Failed to toggle favorite status');
+        }
+      } else {
+        console.error('No token found');
+      }
+    } catch (error) {
+      console.error('Error toggling favorite status:', error);
+    }
+  };
+
+  const removeFavorite = async (item) => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (token) {
+        const response = await axios.delete(
+          `http://10.4.6.44:8080/customer/delete/${item.offeringID}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`,
+            },
+          }
+        );
+        if (response.status === 200) {
+          console.log('Favorite status toggled successfully');
+        } else {
+          console.error('Failed to toggle favorite status');
+        }
+      } else {
+        console.error('No token found');
+      }
+    } catch (error) {
+      console.error('Error toggling favorite status:', error);
+    }
+  };
+
+  const handlePressAvailable = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const updatedItem = {
+        ...item,
+        available: !isAvailable,  // Toggle the availability
+      };
+
+      const response = await axios.put(
+        `http://10.4.6.44:8080/vendor/update`,
+        {
+          offeringID: updatedItem.offeringID,
+          name: updatedItem.name,
+          category: updatedItem.category,
+          price: updatedItem.price,
+          type: updatedItem.type,
+          description: updatedItem.description,
+          available: updatedItem.available,
+          availableTime: updatedItem.availableTime,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        setIsAvailable(updatedItem.available);
+        Alert.alert("Success", "Product availability updated successfully");
+      } else {
+        Alert.alert("Error", "Failed to update product availability");
+      }
+    } catch (error) {
+      Alert.alert("Error", "Something went wrong while updating data");
+      console.error(error);
+    }
+  };
+
+  const handlePressNotAvailable = () => {
+    // Logic when item is not available
+    console.log("Item is not available");
+  };
+
   return (
     <TouchableOpacity
       style={styles.container}
-      //   onPress={() => {
-      //     handleProductClick(item);
-      //   }}
+      onPress={() => handleProductClick(item)}
     >
-      <Image source={{ uri: item.image }} style={styles.coverImage} />
+      <Image source={{ uri: `data:image/png;base64,${item.image}` }} style={styles.coverImage} />
       <View style={styles.contentContainer}>
         <Text style={styles.title}>{item.name}</Text>
         <Text style={styles.price}>${item.price}</Text>
       </View>
-      <View style={styles.likeContainer}>
-        <TouchableOpacity
-          onPress={() => {
-            toggleFavorite(item);
-          }}
-        >
-          {/* {item.isFavorite ? (
-            <Image
-              source={require("../assets/favoriteFilled.png")}
-              style={styles.faviorate}
-            />
-          ) : (
-            <Image
-              source={require("../assets/favorite.png")}
-              style={styles.faviorate}
-            />
-          )} */}
-        </TouchableOpacity>
-      </View>
+      {icon && (
+        <View style={styles.likeContainer}>
+          <TouchableOpacity onPress={() => toggleFavorite(item)}>
+            <EvilIcons name="heart" size={20} color={isFavorite ? "red" : "black"} />
+          </TouchableOpacity>
+        </View>
+      )}
+      <CustomButton
+        label={isAvailable ? "Check Availability" : "Not Available"}
+        handlePress={icon === false ? handlePressAvailable : handlePressNotAvailable}
+        color={isAvailable ? "green" : "red"}
+      />
     </TouchableOpacity>
   );
 };
@@ -72,7 +187,7 @@ const styles = StyleSheet.create({
     right: 10,
     top: 10,
   },
-  faviorate: {
+  favorite: {
     height: 20,
     width: 20,
   },

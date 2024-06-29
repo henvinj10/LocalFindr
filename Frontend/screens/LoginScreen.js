@@ -47,9 +47,9 @@ const LoginScreen = ({ navigation }) => {
         email: email.value,
         password: password.value,
       });
-      // const profileData = await response.json();
-      // console.log();
       const token = response.data.token;
+      // const token = response.data.token
+      // console.log(token);
       // // Store token using AsyncStorage or other storage method
       AsyncStorage.setItem("token", token);
 

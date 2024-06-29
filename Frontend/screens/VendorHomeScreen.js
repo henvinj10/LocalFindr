@@ -5,12 +5,9 @@ import {
   StyleSheet,
   Alert,
   Image,
-  Pressable,
-  ScrollView,
 } from "react-native";
 import axios from "axios";
 import * as ImagePicker from "expo-image-picker";
-import colors from "../constants/Colors";
 import CustomButton from "../components/Button";
 import TextInputField from "../components/TextInputField";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -20,6 +17,7 @@ const UploadProductScreen = () => {
   const [category, setCategory] = useState("");
   const [price, setPrice] = useState("");
   const [image, setImage] = useState(null);
+  const [base64Image, setBase64Image] = useState("");
 
   const selectImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -27,12 +25,13 @@ const UploadProductScreen = () => {
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
+      base64: true,
     });
-
-    console.log(result);
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
+      setBase64Image(result.assets[0].base64);
+      console.log(result.assets[0].uri);
     }
   };
 
@@ -42,27 +41,29 @@ const UploadProductScreen = () => {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("category", category);
-    formData.append("price", parseFloat(price));
-    formData.append("image", {
-      uri: "https://variety.com/wp-content/uploads/2021/04/Avatar.jpg?w=800&h=533&crop=1&resize=681%2C454",
-      name: "product_image.jpg",
-      type: "image/jpeg",
-    });
     try {
+      const token = await AsyncStorage.getItem("token");
+
       const response = await axios.post(
         "http://10.4.6.44:8080/vendor/create",
-        formData,
+        {
+          name: name,
+          category: category,
+          price: parseFloat(price), // Ensure price is sent as a number
+          type: "PRODUCT",
+          description: "Lorwersjef",
+          available: true,
+          availableTime: "Monday",
+          image: base64Image, // Send base64 image
+        },
         {
           headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${AsyncStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
           },
         }
       );
-      if (response.status === 201) {
+      if (response.status === 200) {
         Alert.alert("Success", "Product uploaded successfully");
         setName("");
         setCategory("");
@@ -85,7 +86,6 @@ const UploadProductScreen = () => {
       </View>
       <Text style={styles.label}>Product Name</Text>
       <TextInputField value={name} onChangeText={setName} />
-      {/* <TextInput style={styles.input} value={name} onChangeText={setName} /> */}
       <Text style={styles.label}>Category</Text>
       <TextInputField value={category} onChangeText={setCategory} />
       <Text style={styles.label}>Price</Text>
@@ -142,7 +142,8 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    marginTop: 50,
+    marginTop: 30,
+    marginBottom: 50,
   },
 });
 

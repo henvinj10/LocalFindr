@@ -16,6 +16,7 @@ const SplashScreen = ({ navigation }) => {
   }, [navigation]);
   const fetchToken = async () => {
     const token = await AsyncStorage.getItem("token");
+    console.log(token)
     setTimeout(() => {
       if (token === null) {
         navigation.replace("Login");
