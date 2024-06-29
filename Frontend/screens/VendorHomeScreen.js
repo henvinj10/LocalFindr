@@ -4,15 +4,13 @@ import {
   Text,
   StyleSheet,
   Alert,
-  Image
+  Image,
 } from "react-native";
 import axios from "axios";
 import * as ImagePicker from "expo-image-picker";
-// import colors from "../constants/Colors";
 import CustomButton from "../components/Button";
 import TextInputField from "../components/TextInputField";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-// import RNFS from 'react-native-fs';
 
 const UploadProductScreen = () => {
   const [name, setName] = useState("");
@@ -27,14 +25,12 @@ const UploadProductScreen = () => {
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
-      base64: true
+      base64: true,
     });
 
     if (!result.canceled) {
-      // RNFS.readFile(result.assets[0].uri, 'base64').then((res) => {
-      //   console.log(res)
-      // })
       setImage(result.assets[0].uri);
+      setBase64Image(result.assets[0].base64);
       console.log(result.assets[0].uri);
     }
   };
@@ -44,27 +40,21 @@ const UploadProductScreen = () => {
       Alert.alert("Error", "Please fill in all fields and select an image");
       return;
     }
-    console.log(base64Image)
 
     try {
       const token = await AsyncStorage.getItem("token");
-      // console.log(token)
+
       const response = await axios.post(
         "http://10.4.6.44:8080/vendor/create",
         {
           name: name,
           category: category,
-          price: 5456,
+          price: parseFloat(price), // Ensure price is sent as a number
           type: "PRODUCT",
           description: "Lorwersjef",
           available: true,
           availableTime: "Monday",
-          image: base64Image,
-          // {
-          //   // uri: "https://variety.com/wp-content/uploads/2021/04/Avatar.jpg?w=800&h=533&crop=1&resize=681%2C454",
-          //   // name: "product_image.jpg",
-          //   // type: "image/jpeg",
-          // }
+          image: base64Image, // Send base64 image
         },
         {
           headers: {
@@ -96,7 +86,6 @@ const UploadProductScreen = () => {
       </View>
       <Text style={styles.label}>Product Name</Text>
       <TextInputField value={name} onChangeText={setName} />
-      {/* <TextInput style={styles.input} value={name} onChangeText={setName} /> */}
       <Text style={styles.label}>Category</Text>
       <TextInputField value={category} onChangeText={setCategory} />
       <Text style={styles.label}>Price</Text>
@@ -153,7 +142,8 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    marginTop: 50,
+    marginTop: 30,
+    marginBottom: 50,
   },
 });
 

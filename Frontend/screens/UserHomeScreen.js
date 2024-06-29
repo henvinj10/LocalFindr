@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,6 +7,7 @@ import {
   Pressable,
   ScrollView,
   Alert,
+  BackHandler,
 } from "react-native";
 import Animated, {
   FadeIn,
@@ -20,6 +21,7 @@ import SearchScreen from "./SearchScreen";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { useFocusEffect } from "@react-navigation/native";
 
 const UserHomeScreen = ({ navigation }) => {
   const [selectedSection, setSelectedSection] = useState({ value: "" });
@@ -33,6 +35,21 @@ const UserHomeScreen = ({ navigation }) => {
     { key: "2", value: "Service" },
     { key: "3", value: "All" },
   ];
+
+  useFocusEffect(
+    useCallback(() => {
+      if (data) {
+        const onBackPress = () => {
+          setData(null);
+          return true; // Prevent default behavior (navigating back)
+        };
+
+        BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+        return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+      }
+    }, [data])
+  );
 
   const handleSectionSelect = (val) => {
     setSelectedSection({ value: val.toUpperCase() });
@@ -62,7 +79,7 @@ const UserHomeScreen = ({ navigation }) => {
         exiting={FadeOut.duration(400)}
         style={{ flex: 1, height: "100%" }}
       >
-        <SearchScreen data={data} />
+        <SearchScreen data={data} isfavorite={true} icon={true} />
       </Animated.View>
     );
   }
@@ -72,42 +89,28 @@ const UserHomeScreen = ({ navigation }) => {
       // Retrieve token from AsyncStorage
       const token = await AsyncStorage.getItem("token");
       console.log("Token:", token);
-      // Construct the request body
-      const requestBody = {
-        type: selectedSection.value,
-        name: search.value,
-        category: null,
-        price: 300000,
-        streetName: null,
-        localBody: null,
-        city: null
-      };
-      console.log("Request body:", requestBody);
 
       const response = await axios.post("http://10.4.6.44:8080/customer/search", {
         type: selectedSection.value,
         name: search.value,
         category: null,
-        price: 300000,
+        price: 3000000,
         streetName: null,
-        localBody: localBody.value,
+        localBody: null,
         city: null
       }, {
-
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
         },
-      })
-      // console.log("Response status:", response.data.image);
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
+      });
 
-      const result = await response.json();
+      console.log("Response status:", response.status);
+
+      const result = response.data;
+
       console.log("Data fetched successfully:", result);
       setData(result);
-      // navigation.navigate("SearchScreen", { data: result }); // Uncomment if needed
     } catch (error) {
       Alert.alert("Error", "Something went wrong while fetching data");
       console.error("Fetch Error:", error);

@@ -1,10 +1,16 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import CustomButton from "../components/Button";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const SettingsScreen = () => {
+const SettingsScreen = ({ navigation }) => {
+  const handleLogout = () => {
+    AsyncStorage.removeItem("token");
+    navigation.replace("Login");
+  };
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>This is the Settings Screen</Text>
+      <CustomButton label="Logout" handlePress={handleLogout} />
     </View>
   );
 };

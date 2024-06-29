@@ -15,11 +15,12 @@ import VendorProfileScreen from "../screens/VendorProfileScreen";
 import { Image } from "react-native";
 import UserHomeScreen from "../screens/UserHomeScreen";
 import ProductDetailsScreen from "../screens/ProductDetailsScreen";
+import InventoryDetails from "../screens/InventoryDetails";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-const Routes = {
+export const Routes = {
   Home: "Home",
   Profile: "Profile",
   Settings: "Settings",
@@ -58,6 +59,7 @@ function VendorBottomTabNavigator() {
   return (
     <Tab.Navigator
       initialRouteName={Routes.Home}
+      backBehavior="initialRoute"
       screenOptions={({ route }) => ({
         tabBarHideOnKeyboard: true,
         tabBarIcon: ({ color, size }) => getTabBarIcon(route, color, size),
@@ -96,6 +98,7 @@ function VendorBottomTabNavigator() {
 function UserBottomTabNavigator() {
   return (
     <Tab.Navigator
+      backBehavior="initialRoute"
       initialRouteName={Routes.Home}
       screenOptions={({ route }) => ({
         tabBarHideOnKeyboard: true,
@@ -137,7 +140,7 @@ function UserBottomTabNavigator() {
 function StackNavigator() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={"VendorHomeTabs"}>
+      <Stack.Navigator initialRouteName={"Splash"}>
         <Stack.Screen
           name={Routes.Splash}
           component={SplashScreen}
@@ -171,6 +174,11 @@ function StackNavigator() {
         <Stack.Screen
           name={Routes.Search}
           component={SearchScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={"InventoryDetails"}
+          component={InventoryDetails}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

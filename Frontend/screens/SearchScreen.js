@@ -7,34 +7,36 @@ import ProductCard from "../components/ProductCard";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import colors from "../constants/Colors";
 import data from "../constants/data.json"; // Assuming this is where you import your data
+import { Routes } from "../navigations/StackNavigator";
 
-const SearchScreen = ({ route }) => {
-  const { data: products } = route.params; // Assuming you pass data as route params
 
+const SearchScreen = ({ data, isfavorite, icon }) => {
+  var products = data; // Assuming you pass data as props
   const navigation = useNavigation();
+  console.log(isfavorite)
 
   const toggleFavorite = (item) => {
     // Your favorite toggle logic here
   };
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const handleBack = () => {
-        navigation.goBack();
-        return true;
-      };
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     const handleBack = () => {
+  //       navigation.replace("UserHomeTabs", Routes.Home);
+  //       return true;
+  //     };
 
-      BackHandler.addEventListener("hardwareBackPress", handleBack);
+  //     const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBack);
 
-      return () => {
-        BackHandler.removeEventListener("hardwareBackPress", handleBack);
-      };
-    }, [navigation])
-  );
+  //     return () => backHandler.remove();
+  //   }, [navigation])
+  // );
 
   const renderProduct = ({ item }) => (
     <ProductCard
       item={item}
+      isFavorite={isfavorite}
+      icon={icon}
       toggleFavorite={toggleFavorite}
       onPress={() => navigation.navigate("ProductDetails", { productId: item.offeringID })}
     />

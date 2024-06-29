@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -6,11 +6,15 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
+  Alert,
 } from "react-native";
 import CustomButton from "../components/Button";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import SearchScreen from "./SearchScreen";
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 
 const VendorProfileScreen = ({ navigation }) => {
+  const [data, setData] = useState(null);
   const handleLogout = () => {
     AsyncStorage.removeItem("token");
     navigation.replace("Login");
@@ -21,27 +25,42 @@ const VendorProfileScreen = ({ navigation }) => {
   };
   const fetchData = async () => {
     try {
-      const response = await fetch("http://10.4.6.44:8080/search", {
-        method: "POST",
+      const token = await AsyncStorage.getItem("token");
+
+      const url = `http://10.4.6.44:8080/vendor/all`;
+
+      const response = await fetch(`http://10.4.6.44:8080/vendor/all`, {
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${AsyncStorage.getItem("token")}`,
+          "Authorization": `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          section: selectedSection.value,
-          searchTerm: search.value,
-          locality: localBody.value,
-        }),
       });
+
       const result = await response.json();
-      console.log(result);
       setData(result);
-      // navigation.navigate("SearchScreen", { data: result });
+      // console.log(result);
+      // setData(result);
+      // navigation.navigate("InventoryDetails", { data });
     } catch (error) {
       Alert.alert("Error", "Something went wrong while fetching data");
       console.error(error);
     }
   };
+
+  if (data) {
+    return (
+      <Animated.View
+        key={"NEWKey"}
+        entering={FadeIn.duration(1000)}
+        exiting={FadeOut.duration(400)}
+        style={{ flex: 1, height: "100%" }}
+      >
+        <SearchScreen data={data} isfavorite={false} icon={false} />
+      </Animated.View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.card}>
@@ -142,87 +161,3 @@ const styles = StyleSheet.create({
 });
 
 export default VendorProfileScreen;
-
-// import React, { useState } from "react";
-// import { View, Text, StyleSheet, Button, FlatList, Alert } from "react-native";
-// import ResultItem from "../components/ResultItem";
-
-// const VendorProfileScreen = () => {
-//   const [view, setView] = useState("profile");
-
-//   const sampleProducts = [
-//     {
-//       id: "1",
-//       name: "Sample Product 1",
-//       category: "Category 1",
-//       price: "19.99",
-//       image: "https://via.placeholder.com/150",
-//     },
-//     {
-//       id: "2",
-//       name: "Sample Product 2",
-//       category: "Category 2",
-//       price: "29.99",
-//       image: "https://via.placeholder.com/150",
-//     },
-//   ];
-
-//   const renderItem = ({ item }) => (
-//     <ResultItem
-//       item={item}
-//       onPress={() => Alert.alert("Product Pressed", item.name)}
-//     />
-//   );
-
-//   return (
-//     <View style={styles.container}>
-//       {view === "profile" && (
-//         <View>
-//           <Text style={styles.text}>This is the Profile Screen</Text>
-//           <Button title="View Inventory" onPress={() => setView("inventory")} />
-//           <Button
-//             title="View Products in Shop"
-//             onPress={() => setView("products")}
-//           />
-//         </View>
-//       )}
-//       {view === "inventory" && (
-//         <View>
-//           <Text style={styles.text}>Inventory Screen</Text>
-//           <Button title="Back to Profile" onPress={() => setView("profile")} />
-//           {/* Add your inventory management components here */}
-//         </View>
-//       )}
-//       {view === "products" && (
-//         <View style={styles.productContainer}>
-//           <Text style={styles.text}>Products in Shop</Text>
-//           <Button title="Back to Profile" onPress={() => setView("profile")} />
-//           <FlatList
-//             data={sampleProducts}
-//             renderItem={renderItem}
-//             keyExtractor={(item) => item.id}
-//           />
-//         </View>
-//       )}
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     alignItems: "center",
-//     justifyContent: "center",
-//   },
-//   text: {
-//     fontSize: 20,
-//     marginBottom: 20,
-//   },
-//   productContainer: {
-//     flex: 1,
-//     width: "100%",
-//     padding: 10,
-//   },
-// });
-
-// export default VendorProfileScreen;
