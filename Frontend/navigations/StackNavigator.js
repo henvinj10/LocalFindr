@@ -7,7 +7,6 @@ import LoginScreen from "../screens/LoginScreen";
 import UserProfileScreen from "../screens/UserProfileScreen";
 import RegistrationScreen from "../screens/RegistrationScreen";
 import { Ionicons } from "@expo/vector-icons";
-import colors from "../constants/Colors";
 import SearchScreen from "../screens/SearchScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import VendorHomeScreen from "../screens/VendorHomeScreen";
@@ -28,6 +27,7 @@ export const Routes = {
   Start: "Start",
   Fade: "Fade",
   Login: "Login",
+  ProductDetails: "ProductDetails",
   Register: "Register",
   UserHomeTabs: "UserHomeTabs",
   VendorHomeTabs: "VendorHomeTabs",
@@ -140,14 +140,14 @@ function UserBottomTabNavigator() {
 function StackNavigator() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={"Splash"}>
+      <Stack.Navigator initialRouteName={Routes.Splash}>
         <Stack.Screen
           name={Routes.Splash}
           component={SplashScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name={"ProductDetails"}
+          name={Routes.ProductDetails}
           component={ProductDetailsScreen}
           options={{ headerShown: false }}
         />

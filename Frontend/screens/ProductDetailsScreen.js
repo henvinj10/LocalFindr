@@ -1,4 +1,13 @@
-import { Alert, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Image,
+  Linking,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { useState, useEffect } from "react";
 import { useRoute } from "@react-navigation/native";
 import Header from "../components/Header";
@@ -21,13 +30,15 @@ const colorsArray = [
 const ProductDetailsScreen = () => {
   const route = useRoute();
   const { item: product } = route.params;
+  const [userType, setUserType] = useState(null);
 
   const [selectedSize, setSelectedSize] = useState("M");
   const [selectedColor, setSelectedColor] = useState("#B11D1D");
-  console.log(product);
+
   const updateAvailability = async () => {
     try {
       const token = await AsyncStorage.getItem("token");
+      setUserType(jwtDecode(token).userType);
       const updatedProduct = {
         ...product,
         available: !product.available, // Toggle availability
@@ -82,15 +93,15 @@ const ProductDetailsScreen = () => {
           }
         );
         if (response.status === 200) {
-          console.log('Product added to favorites successfully');
+          Alert.alert("Product added to favorites successfully");
         } else {
-          console.error('Failed to add product to favorites');
+          Alert.alert("Failed to add product to favorites");
         }
       } else {
-        console.error('No token found');
+        console.error("No token found");
       }
     } catch (error) {
-      console.error('Error adding product to favorites:', error);
+      Alert.alert("Error adding product to favorites:", error);
     }
   };
 
@@ -107,12 +118,11 @@ const ProductDetailsScreen = () => {
   return (
     <ScrollView>
       <LinearGradient colors={["#FDF0F3", "#FFFBFC"]} style={styles.container}>
-        <View style={styles.header}>
-          <Header />
-        </View>
         <View style={styles.imageContainer}>
-          {/* Replace with your image component */}
-          <Image source={{ uri: `data:image/png;base64,${product.image}` }} style={styles.coverImage} />
+          <Image
+            source={{ uri: `data:image/png;base64,${product.image}` }}
+            style={styles.coverImage}
+          />
         </View>
         <View style={styles.contentContainer}>
           <View style={styles.textContainer}>
@@ -120,15 +130,38 @@ const ProductDetailsScreen = () => {
             <Text style={styles.fontText}>${product.price}</Text>
           </View>
           <View style={styles.attributeContainer}>
-            <Text style={[styles.fontText, styles.attributeText]}>Category: {product.category}</Text>
-            <Text style={[styles.fontText, styles.attributeText]}>Type: {product.type}</Text>
-            <Text style={[styles.fontText, styles.attributeText]}>Description: {product.description}</Text>
-            <Text style={[styles.fontText, styles.attributeText]}>Available: {product.available ? 'Yes' : 'No'}</Text>
+            <Text style={[styles.fontText, styles.attributeText]}>
+              Category: {product.category}
+            </Text>
+            <Text style={[styles.fontText, styles.attributeText]}>
+              Type: {product.type}
+            </Text>
+            <Text style={[styles.fontText, styles.attributeText]}>
+              Description: {product.description}
+            </Text>
+            <Text style={[styles.fontText, styles.attributeText]}>
+              Available: {product.available ? "Yes" : "No"}
+            </Text>
             {product.availableTime && (
-              <Text style={[styles.fontText, styles.attributeText]}>Available Time: {product.availableTime}</Text>
+              <Text style={[styles.fontText, styles.attributeText]}>
+                Available Time: {product.availableTime}
+              </Text>
             )}
             {product.gmapLink && (
-              <Text style={[styles.fontText, styles.attributeText]}>Available Time: {product.gmapLink}</Text>
+              <Pressable
+                style={styles.map}
+                onPress={() => Linking.openURL(product.gmapLink)}
+              >
+                <Text style={[styles.fontText, styles.attributeText]}>
+                  Location:
+                </Text>
+                <EvilIcons
+                  name="location"
+                  size={20}
+                  color="blue"
+                  style={styles.icon}
+                />
+              </Pressable>
             )}
           </View>
           <TouchableOpacity style={styles.button} onPress={updateAvailability}>
@@ -145,13 +178,17 @@ export default ProductDetailsScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop: 20,
   },
   header: {
     padding: 15,
   },
   imageContainer: {
-    height: 420,
-    width: "100%",
+    height: 256,
+    width: 256,
+    borderRadius: 20,
+    position: "relative",
+    alignSelf: "center",
   },
   coverImage: {
     resizeMode: "cover",
@@ -169,51 +206,11 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#444444",
   },
-  sizeText: {
+  attributeContainer: {
     marginTop: 20,
   },
-  sizeContainer: {
-    flexDirection: "row",
-    marginTop: 5,
-    marginBottom: 5,
-  },
-  sizeValueContainer: {
-    backgroundColor: "#FFFFFF",
-    height: 40,
-    width: 40,
-    borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
-    marginHorizontal: 5,
-  },
-  sizeValueText: {
-    fontSize: 18,
-    fontWeight: "700",
-  },
-  selectedSize: {
-    borderColor: "#E55B5B",
-    borderWidth: 2,
-  },
-  colorContainer: {
-    flexDirection: "column",
-    marginTop: 20,
-  },
-  borderColorCircle: {
-    height: 48,
-    width: 48,
-    padding: 5,
-    marginHorizontal: 5,
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: "#CCCCCC",
-  },
-  colorCircle: {
-    flex: 1,
-    borderRadius: 18,
-  },
-  selectedColor: {
-    borderColor: "#E55B5B",
-    borderWidth: 2,
+  attributeText: {
+    marginBottom: 10,
   },
   button: {
     backgroundColor: "#E96E6E",
@@ -222,6 +219,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 20,
     marginTop: 20,
+  },
+  map: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   buttonText: {
     fontSize: 24,

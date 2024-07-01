@@ -1,52 +1,86 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
   Text,
   Image,
   StyleSheet,
-  TouchableOpacity,
-  Dimensions,
   Alert,
+  BackHandler,
 } from "react-native";
 import CustomButton from "../components/Button";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import SearchScreen from "./SearchScreen";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import { useFocusEffect } from "@react-navigation/native";
+import { jwtDecode } from "jwt-decode";
+import "core-js/stable/atob"; // Correct import
 
 const VendorProfileScreen = ({ navigation }) => {
   const [data, setData] = useState(null);
-  const handleLogout = () => {
-    AsyncStorage.removeItem("token");
+  const [email, setEmail] = useState(null);
+  const [userType, setUserType] = useState(null);
+
+  useEffect(() => {
+    const getTokenAndSetEmail = async () => {
+      try {
+        const token = await AsyncStorage.getItem("token");
+        if (token) {
+          const decoded = jwtDecode(token);
+          setEmail(decoded.email);
+          setUserType(decoded.userType);
+        }
+      } catch (error) {
+        console.error("Error decoding token:", error);
+      }
+    };
+
+    getTokenAndSetEmail();
+  }, []);
+
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem("token");
     navigation.replace("Login");
-    // product.color = selectedColor;
-    // product.size = selectedSize;
-    // // Add the product to the cart logic here
-    // navigation.navigate("CART");
   };
+
   const fetchData = async () => {
     try {
       const token = await AsyncStorage.getItem("token");
 
-      const url = `http://10.4.6.44:8080/vendor/all`;
+      if (!token) {
+        throw new Error("No token found");
+      }
 
       const response = await fetch(`http://10.4.6.44:8080/vendor/all`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
       const result = await response.json();
       setData(result);
-      // console.log(result);
-      // setData(result);
-      // navigation.navigate("InventoryDetails", { data });
     } catch (error) {
       Alert.alert("Error", "Something went wrong while fetching data");
       console.error(error);
     }
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      if (data) {
+        const onBackPress = () => {
+          setData(null);
+          return true; // Prevent default behavior (navigating back)
+        };
+
+        BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+        return () =>
+          BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+      }
+    }, [data])
+  );
 
   if (data) {
     return (
@@ -56,7 +90,7 @@ const VendorProfileScreen = ({ navigation }) => {
         exiting={FadeOut.duration(400)}
         style={{ flex: 1, height: "100%" }}
       >
-        <SearchScreen data={data} isfavorite={false} icon={false} />
+        <SearchScreen data={data} isFavorite={false} icon={false} />
       </Animated.View>
     );
   }
@@ -67,8 +101,7 @@ const VendorProfileScreen = ({ navigation }) => {
         <View style={styles.header}>
           <View style={styles.profile}>
             <Text style={styles.greeting}>Hello</Text>
-            <Text style={styles.name}>Stevens</Text>
-            <Text style={styles.email}>johnstevens@email.com</Text>
+            <Text style={styles.email}>{email}</Text>
           </View>
           <View style={styles.imageContainer}>
             <Image
@@ -77,20 +110,14 @@ const VendorProfileScreen = ({ navigation }) => {
                 uri: "https://variety.com/wp-content/uploads/2021/04/Avatar.jpg?w=800&h=533&crop=1&resize=681%2C454",
               }}
             />
-            <Text style={{ marginTop: 10 }}>Customer</Text>
+            <Text style={{ marginTop: 10 }}>{userType}</Text>
           </View>
         </View>
       </View>
       <View style={styles.buttonContainer}>
         <View style={styles.buttons}>
-          <CustomButton
-            label="Manage Inventory"
-            handlePress={fetchData}
-          />
-          <CustomButton
-            label="Logout"
-            handlePress={handleLogout}
-          />
+          <CustomButton label="Manage Inventory" handlePress={fetchData} />
+          <CustomButton label="Logout" handlePress={handleLogout} />
         </View>
       </View>
     </View>
@@ -101,8 +128,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#fff",
-    // justifyContent: "space-around",
   },
   card: {
     padding: 16,
@@ -137,7 +162,7 @@ const styles = StyleSheet.create({
   profileImage: {
     width: 150,
     height: 150,
-    borderRadius: 50,
+    borderRadius: 75,
   },
   logout: {
     alignItems: "center",
@@ -145,7 +170,6 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     width: "100%",
-    // width: Dimensions.get("screen").width * 0.5,
     alignContent: "center",
   },
   buttons: {

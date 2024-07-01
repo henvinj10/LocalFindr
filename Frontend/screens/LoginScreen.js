@@ -18,6 +18,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import "core-js/stable/atob";
+import Toast from "react-native-toast-message";
 
 const LoginScreen = ({ navigation }) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -28,11 +29,7 @@ const LoginScreen = ({ navigation }) => {
     error: null,
   });
 
-  // Your API_BASE_URL setup (adjust based on your environment)
-  const API_BASE_URL = "your_api_base_url_here";
-
   const handleLogin = () => {
-    // console.log(AsyncStorage.getItem("token"));
     if (email.valid && password.valid) {
       userLogin();
     } else {
@@ -47,24 +44,50 @@ const LoginScreen = ({ navigation }) => {
         email: email.value,
         password: password.value,
       });
-      const token = response.data.token;
-      // const token = response.data.token
-      // console.log(token);
-      // // Store token using AsyncStorage or other storage method
-      AsyncStorage.setItem("token", token);
 
-      // // Example Toast message (adjust as needed)
-      // Alert.alert("Login Successful", "Welcome!");
-      // console.log(response);
-      setTimeout(() => {
-        if (jwtDecode(token).userType === "CUSTOMER") {
-          navigation.replace("UserHomeTabs");
-        } else {
-          navigation.replace("VendorHomeTabs");
-        }
-      }, 1000);
+      const token = response.data.token;
+
+      if (token) {
+        await AsyncStorage.setItem("token", token);
+
+        Toast.show({
+          type: "success",
+          text1: "Login Successful",
+          text2: "Welcome!",
+        });
+
+        setTimeout(() => {
+          try {
+            const decodedToken = jwtDecode(token);
+            if (decodedToken.userType === "CUSTOMER") {
+              navigation.replace("UserHomeTabs");
+            } else {
+              navigation.replace("VendorHomeTabs");
+            }
+          } catch (decodeError) {
+            Alert.alert("Error", "Failed to decode token. Please try again.");
+          }
+        }, 1000);
+      } else {
+        Alert.alert(
+          "Error",
+          "User not found. Please check your email and try again."
+        );
+      }
     } catch (error) {
-      Alert.alert("Error", error.message || "Login failed");
+      if (error.response) {
+        const errorMessage = error.response.data.message;
+        if (errorMessage === "User not found") {
+          Alert.alert(
+            "Error",
+            "User not found. Please check your email and try again."
+          );
+        } else {
+          Alert.alert("Error", errorMessage || "Login failed");
+        }
+      } else {
+        Alert.alert("Error", error.message || "Login failed");
+      }
     }
   };
 
@@ -117,15 +140,6 @@ const LoginScreen = ({ navigation }) => {
             toggleVisibility={() => setPasswordVisible(!passwordVisible)}
             onChangeText={handlePasswordChange}
           />
-          <View style={styles.forgotPassword}>
-            <Pressable
-              onPress={() => {
-                navigation.navigate("ForgotPassword");
-              }}
-            >
-              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-            </Pressable>
-          </View>
           <View style={styles.button}>
             <CustomButton label="Login" handlePress={handleLogin} />
           </View>
