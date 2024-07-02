@@ -6,24 +6,21 @@ import { jwtDecode } from "jwt-decode";
 import "core-js/stable/atob";
 
 const SplashScreen = ({ navigation }) => {
-  // const token =
-  //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
-  // console.log(jwtDecode(token).name);
-
   useEffect(() => {
     fetchToken();
-    // Cleanup the timeout if the component unmounts before the timeout finishes
   }, [navigation]);
   const fetchToken = async () => {
     const token = await AsyncStorage.getItem("token");
-    console.log(token)
     setTimeout(() => {
       if (token === null) {
         navigation.replace("Login");
       } else {
         if (jwtDecode(token).userType === "CUSTOMER") {
+          console.log(jwtDecode(token).userType);
           navigation.replace("UserHomeTabs");
         } else {
+          console.log(jwtDecode(token).userType);
+          console.log(jwtDecode(token).email);
           navigation.replace("VendorHomeTabs");
         }
       }
@@ -49,7 +46,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: colors.backgroundColor,
     padding: 20,
-    // width: Dimensions.get("screen").width,
   },
   logo: {
     resizeMode: "contain",
