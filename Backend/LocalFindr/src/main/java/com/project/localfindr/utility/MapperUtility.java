@@ -103,7 +103,7 @@ public class MapperUtility {
                     responseDTO.setDescription(offering.getDescription());
                     responseDTO.setPrice(offering.getPrice());
                     responseDTO.setImage(offering.getImage());
-                    responseDTO.setIsAvailable(offering.isAvailable());
+                    responseDTO.setAvailable(offering.isAvailable());
                     responseDTO.setAvailableTime(offering.getAvailableTime());
 
                     AddressEntity address = addressRepository.findByRegisterEntityEmail(offering.getEmail());
@@ -138,7 +138,7 @@ public class MapperUtility {
                         responseDTO.setDescription(offeringEntity.getDescription());
                         responseDTO.setPrice(offeringEntity.getPrice());
                         responseDTO.setImage(offeringEntity.getImage());
-                        responseDTO.setIsAvailable(offeringEntity.isAvailable());
+                        responseDTO.setAvailable(offeringEntity.isAvailable());
                         responseDTO.setAvailableTime(offeringEntity.getAvailableTime());
 
                         // Fetch address details associated with offering
