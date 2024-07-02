@@ -20,10 +20,23 @@ const UserData = ({ navigation }) => {
   const [data, setData] = useState(null);
   const [email, setEmail] = useState(null);
 
-  useEffect(async () => {
-    const token = await AsyncStorage.getItem("token");
-    setEmail(jwtDecode(token).email);
-    console.log(email);
+  useEffect(() => {
+    async function getToken() {
+      try {
+        const token = await AsyncStorage.getItem("token");
+        if (token) {
+          setEmail(jwtDecode(token).email);
+        } else {
+          // Handle case where token is not available
+          console.error("Token not found in AsyncStorage");
+        }
+      } catch (error) {
+        // Handle AsyncStorage or jwtDecode errors
+        console.error("Error retrieving or decoding token:", error);
+      }
+    }
+
+    getToken();
   }, []);
 
   useFocusEffect(
@@ -48,6 +61,7 @@ const UserData = ({ navigation }) => {
     Toast.show({
       type: "success",
       text1: "Logout Successful",
+      position: "bottom",
     });
   };
 

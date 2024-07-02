@@ -27,7 +27,6 @@ import CustomButton from "../components/Button";
 
 const RegistrationScreen = ({ navigation }) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
-  // const [name, setName] = useState({ value: "", valid: false, error: null });
   const [email, setEmail] = useState({ value: "", valid: false, error: null });
   const [password, setPassword] = useState({
     value: "",
@@ -76,8 +75,6 @@ const RegistrationScreen = ({ navigation }) => {
     valid: false,
     error: null,
   });
-
-  const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
   handleNameChange = (text) => {
     if (isEmpty(text)) {
@@ -269,7 +266,6 @@ const RegistrationScreen = ({ navigation }) => {
     console.log(email.value);
     console.log(userType.value);
     if (email.valid && password.valid && userType.value === "CUSTOMER") {
-      console.log("Customer registration");
       registerCustomer();
     } else if (
       userType.value === "VENDOR" &&

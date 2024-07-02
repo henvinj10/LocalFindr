@@ -15,12 +15,12 @@ import colors from "../constants/Colors";
 import TextInputField from "../components/TextInputField";
 import { isEmpty } from "../utils/Validations";
 import SearchScreen from "./SearchScreen";
-import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useFocusEffect } from "@react-navigation/native";
 
 const UserHomeScreen = ({ navigation }) => {
+  const [valid, setValid] = useState(false);
   const [selectedSection, setSelectedSection] = useState({ value: "ALL" });
   const [search, setSearch] = useState({
     value: "",
@@ -89,26 +89,44 @@ const UserHomeScreen = ({ navigation }) => {
   };
 
   const fetchResults = () => {
-    if (selectedSection.value && search.valid) {
-      fetchData();
-    } else {
-      Alert.alert(
-        "Fill Fields",
-        "Give at least search term and select a section"
-      );
-    }
+    // if (selectedSection.value && search.valid && localBody.valid) {
+    //   console.log(
+    //     `Searching for ${search.value} ${selectedSection.value} in ${localBody.value} `
+    //   );
+    fetchData();
+    // } else {
+    //   Alert.alert(
+    //     "Fill Fields",
+    //     "Give at least search term, select a section and locality"
+    //   );
+    // }
   };
 
   const fetchData = async () => {
     try {
       const token = await AsyncStorage.getItem("token");
+
+      // Check if at least one field is filled
+      if (
+        !search.value &&
+        !category.value &&
+        !price.value &&
+        !street.value &&
+        !localBody.value &&
+        !city.value
+      ) {
+        Alert.alert("Validation Error", "Please fill at least one field");
+        return;
+      } else {
+      }
+
       const response = await axios.post(
         "http://10.4.6.44:8080/customer/search",
         {
-          type: selectedSection.value,
+          type: selectedSection.value === "ALL" ? null : selectedSection.value,
           name: search.value,
           category: category.value || null,
-          price: price.value || 3000000,
+          price: price.value || null,
           streetName: street.value || null,
           localBody: localBody.value || null,
           city: city.value || null,
@@ -120,6 +138,8 @@ const UserHomeScreen = ({ navigation }) => {
           },
         }
       );
+
+      setSelectedSection({ value: "ALL" });
       setData(response.data);
     } catch (error) {
       Alert.alert("Error", "Something went wrong while fetching data");
@@ -197,11 +217,16 @@ const UserHomeScreen = ({ navigation }) => {
             setSelected={handleSectionSelect}
             data={sections}
             save="value"
-            placeholder="Choose a section"
+            placeholder="Choose a section - Default is ALL"
           />
         </View>
       </View>
-      {selectedSection.value && search.value && localBody.value && (
+      {(search.value ||
+        category.value ||
+        price.value ||
+        street.value ||
+        localBody.value ||
+        city.value) && (
         <Animated.View
           key={"uniqueKey"}
           entering={FadeIn.duration(2000)}
