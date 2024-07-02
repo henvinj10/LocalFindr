@@ -16,11 +16,8 @@ const SplashScreen = ({ navigation }) => {
         navigation.replace("Login");
       } else {
         if (jwtDecode(token).userType === "CUSTOMER") {
-          console.log(jwtDecode(token).userType);
           navigation.replace("UserHomeTabs");
         } else {
-          console.log(jwtDecode(token).userType);
-          console.log(jwtDecode(token).email);
           navigation.replace("VendorHomeTabs");
         }
       }

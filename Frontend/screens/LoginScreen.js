@@ -54,6 +54,7 @@ const LoginScreen = ({ navigation }) => {
           type: "success",
           text1: "Login Successful",
           text2: "Welcome!",
+          position: "bottom",
         });
 
         setTimeout(() => {

@@ -14,15 +14,16 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ProductCard = ({ item, isFavorite, icon }) => {
-  const [isAvailable, setIsAvailable] = useState(item.available);
+  const [availability, setAvailability] = useState(item.available);
   const navigation = useNavigation();
   // console.log("Item:", item);
 
   useEffect(() => {
-    setIsAvailable(item.available);
+    setAvailability(item.available);
   }, [item.available]);
 
   const handleProductClick = (item) => {
+    console.log(`${item.available} ${isFavorite}`);
     navigation.navigate("ProductDetails", { item });
   };
 
@@ -92,7 +93,7 @@ const ProductCard = ({ item, isFavorite, icon }) => {
       const token = await AsyncStorage.getItem("token");
       const updatedItem = {
         ...item,
-        available: !isAvailable, // Toggle the availability
+        available: !availability, // Toggle the availability
       };
 
       const response = await axios.put(
@@ -116,7 +117,7 @@ const ProductCard = ({ item, isFavorite, icon }) => {
       );
 
       if (response.status === 200) {
-        setIsAvailable(updatedItem.available);
+        setAvailability(updatedItem.available);
         Alert.alert("Success", "Product availability updated successfully");
       } else {
         Alert.alert("Error", "Failed to update product availability");
@@ -129,7 +130,6 @@ const ProductCard = ({ item, isFavorite, icon }) => {
 
   const handlePressNotAvailable = () => {
     // Logic when item is not available
-    console.log("Item is not available");
   };
 
   return (
@@ -158,7 +158,7 @@ const ProductCard = ({ item, isFavorite, icon }) => {
       )}
       <CustomButton
         label={
-          isAvailable
+          availability
             ? isFavorite
               ? "Available"
               : "Make Unavailable"
@@ -169,7 +169,7 @@ const ProductCard = ({ item, isFavorite, icon }) => {
         handlePress={
           icon === false ? handlePressAvailable : handlePressNotAvailable
         }
-        color={isAvailable ? "green" : "red"}
+        color={availability ? "green" : "red"}
       />
     </TouchableOpacity>
   );
@@ -182,6 +182,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 10,
     marginVertical: 10,
+    borderRadius: 20,
   },
   coverImage: {
     height: 256,

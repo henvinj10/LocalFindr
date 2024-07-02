@@ -6,40 +6,63 @@ import {
   StyleSheet,
   Alert,
   BackHandler,
+  Linking,
+  Pressable,
 } from "react-native";
 import CustomButton from "../components/Button";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import SearchScreen from "./SearchScreen";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useFocusEffect } from "@react-navigation/native";
-import { jwtDecode } from "jwt-decode";
-import "core-js/stable/atob"; // Correct import
+import { jwtDecode } from "jwt-decode"; // Updated import for jwtDecode
+import "core-js/stable/atob";
+import AddressForm from "./AddressForm";
+import { Feather } from "@expo/vector-icons";
+import Toast from "react-native-toast-message";
 
 const VendorProfileScreen = ({ navigation }) => {
   const [data, setData] = useState(null);
   const [email, setEmail] = useState(null);
   const [userType, setUserType] = useState(null);
+  const [address, setAddress] = useState(null);
+  const [isAddressFormVisible, setIsAddressFormVisible] = useState(false);
 
   useEffect(() => {
-    const getTokenAndSetEmail = async () => {
+    const getDetails = async () => {
       try {
         const token = await AsyncStorage.getItem("token");
         if (token) {
           const decoded = jwtDecode(token);
           setEmail(decoded.email);
           setUserType(decoded.userType);
+          const url = `http://10.4.6.44:8080/user/profile`;
+
+          const response = await fetch(url, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const result = await response.json();
+          setAddress(result.address);
         }
       } catch (error) {
         console.error("Error decoding token:", error);
       }
     };
 
-    getTokenAndSetEmail();
+    getDetails();
   }, []);
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem("token");
     navigation.replace("Login");
+    Toast.show({
+      type: "success",
+      text1: "Logout Successful",
+      position: "bottom",
+    });
   };
 
   const fetchData = async () => {
@@ -60,6 +83,7 @@ const VendorProfileScreen = ({ navigation }) => {
 
       const result = await response.json();
       setData(result);
+      console.log(result[0].available);
     } catch (error) {
       Alert.alert("Error", "Something went wrong while fetching data");
       console.error(error);
@@ -68,9 +92,11 @@ const VendorProfileScreen = ({ navigation }) => {
 
   useFocusEffect(
     useCallback(() => {
-      if (data) {
+      if (data || isAddressFormVisible) {
         const onBackPress = () => {
           setData(null);
+          setIsAddressFormVisible(false);
+          console.log(isAddressFormVisible); // Log current visibility for debugging
           return true; // Prevent default behavior (navigating back)
         };
 
@@ -79,8 +105,21 @@ const VendorProfileScreen = ({ navigation }) => {
         return () =>
           BackHandler.removeEventListener("hardwareBackPress", onBackPress);
       }
-    }, [data])
+    }, [data, isAddressFormVisible])
   );
+
+  if (isAddressFormVisible === true) {
+    return (
+      <Animated.View
+        key={"NEWKey"}
+        entering={FadeIn.duration(100)}
+        exiting={FadeOut.duration(100)}
+        style={{ flex: 1, height: "100%" }}
+      >
+        <AddressForm />
+      </Animated.View>
+    );
+  }
 
   if (data) {
     return (
@@ -113,10 +152,41 @@ const VendorProfileScreen = ({ navigation }) => {
             <Text style={{ marginTop: 10 }}>{userType}</Text>
           </View>
         </View>
+        {address && (
+          <View style={styles.addressContainer}>
+            <Text style={styles.addressText}>
+              Building: {address.buildingInfo}
+            </Text>
+            <Text style={styles.addressText}>Street: {address.streetName}</Text>
+            <Text style={styles.addressText}>
+              Local Body: {address.localBody}
+            </Text>
+            <Text style={styles.addressText}>District: {address.district}</Text>
+            <Text style={styles.addressText}>City: {address.city}</Text>
+            <Text style={styles.addressText}>State: {address.state}</Text>
+            <Text style={styles.addressText}>Country: {address.country}</Text>
+            <Text style={styles.addressText}>
+              Google Maps:{" "}
+              <Pressable onPress={() => Linking.openURL(address.gmapLink)}>
+                <Feather name="map-pin" size={20} color="blue" />
+              </Pressable>
+              {/* <Text
+                style={styles.link}
+                onPress={() => Linking.openURL(address.gmapLink)}
+              >
+                {address.gmapLink}
+              </Text> */}
+            </Text>
+          </View>
+        )}
       </View>
       <View style={styles.buttonContainer}>
         <View style={styles.buttons}>
           <CustomButton label="Manage Inventory" handlePress={fetchData} />
+          <CustomButton
+            label="Update Address"
+            handlePress={() => setIsAddressFormVisible(true)}
+          />
           <CustomButton label="Logout" handlePress={handleLogout} />
         </View>
       </View>
@@ -150,23 +220,25 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "bold",
   },
-  name: {
-    fontSize: 30,
-    fontWeight: "bold",
-  },
   email: {
     marginTop: 16,
     fontSize: 14,
     color: "gray",
   },
+  addressContainer: {
+    marginTop: 16,
+  },
+  addressText: {
+    fontSize: 14,
+    color: "gray",
+  },
+  link: {
+    color: "blue",
+  },
   profileImage: {
     width: 150,
     height: 150,
     borderRadius: 75,
-  },
-  logout: {
-    alignItems: "center",
-    width: "100%",
   },
   buttonContainer: {
     width: "100%",
@@ -176,11 +248,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     alignContent: "center",
     marginVertical: 20,
-  },
-  productImage: {
-    width: 50,
-    height: 50,
-    marginTop: 8,
   },
 });
 
