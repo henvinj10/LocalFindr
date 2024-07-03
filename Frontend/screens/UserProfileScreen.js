@@ -1,16 +1,43 @@
-import React, { useState, useCallback } from "react";
-import { View, Text, Image, StyleSheet, Alert, BackHandler } from "react-native";
+import React, { useState, useCallback, useEffect } from "react";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  Alert,
+  BackHandler,
+} from "react-native";
 import CustomButton from "../components/Button";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useFocusEffect } from "@react-navigation/native";
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import SearchScreen from "./SearchScreen";
 import "core-js/stable/atob";
+import Toast from "react-native-toast-message";
 
 const UserData = ({ navigation }) => {
   const [data, setData] = useState(null);
-  var email = null;
+  const [email, setEmail] = useState(null);
+
+  useEffect(() => {
+    async function getToken() {
+      try {
+        const token = await AsyncStorage.getItem("token");
+        if (token) {
+          setEmail(jwtDecode(token).email);
+        } else {
+          // Handle case where token is not available
+          console.error("Token not found in AsyncStorage");
+        }
+      } catch (error) {
+        // Handle AsyncStorage or jwtDecode errors
+        console.error("Error retrieving or decoding token:", error);
+      }
+    }
+
+    getToken();
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -22,7 +49,8 @@ const UserData = ({ navigation }) => {
 
         BackHandler.addEventListener("hardwareBackPress", onBackPress);
 
-        return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+        return () =>
+          BackHandler.removeEventListener("hardwareBackPress", onBackPress);
       }
     }, [data])
   );
@@ -30,6 +58,11 @@ const UserData = ({ navigation }) => {
   const handleLogout = () => {
     AsyncStorage.removeItem("token");
     navigation.replace("Login");
+    Toast.show({
+      type: "success",
+      text1: "Logout Successful",
+      position: "bottom",
+    });
   };
 
   const getWishlist = async () => {
@@ -42,7 +75,7 @@ const UserData = ({ navigation }) => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       // console.log(jwtDecode(token).userType);
@@ -62,7 +95,7 @@ const UserData = ({ navigation }) => {
         exiting={FadeOut.duration(400)}
         style={{ flex: 1, height: "100%" }}
       >
-        <SearchScreen data={data} isfavorite={false} icon={true} />
+        <SearchScreen data={data} isFavorite={false} icon={true} />
       </Animated.View>
     );
   }
@@ -98,7 +131,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#fff",
   },
   card: {
     padding: 16,

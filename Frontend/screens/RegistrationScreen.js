@@ -27,7 +27,6 @@ import CustomButton from "../components/Button";
 
 const RegistrationScreen = ({ navigation }) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
-  // const [name, setName] = useState({ value: "", valid: false, error: null });
   const [email, setEmail] = useState({ value: "", valid: false, error: null });
   const [password, setPassword] = useState({
     value: "",
@@ -76,8 +75,6 @@ const RegistrationScreen = ({ navigation }) => {
     valid: false,
     error: null,
   });
-
-  const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
   handleNameChange = (text) => {
     if (isEmpty(text)) {
@@ -267,10 +264,8 @@ const RegistrationScreen = ({ navigation }) => {
 
   handleRegister = () => {
     console.log(email.value);
-    console.log(password.value);
     console.log(userType.value);
     if (email.valid && password.valid && userType.value === "CUSTOMER") {
-      console.log("Customer registration");
       registerCustomer();
     } else if (
       userType.value === "VENDOR" &&
@@ -293,7 +288,6 @@ const RegistrationScreen = ({ navigation }) => {
 
   registerCustomer = async () => {
     try {
-      // const response = await axios.post(`http://10.4.6.44:8080/auth/register`
       const response = await axios.post(`http://10.4.6.44:8080/auth/register`, {
         email: email.value,
         password: password.value,
@@ -303,7 +297,7 @@ const RegistrationScreen = ({ navigation }) => {
 
       Toast.show({
         type: "success",
-        text1: "User registered successfully, Please verify your mail",
+        text1: "User registered successfully, Please login",
         position: "bottom",
       });
 
@@ -312,18 +306,18 @@ const RegistrationScreen = ({ navigation }) => {
       }, 1000);
     } catch (error) {
       if (error.response) {
-        // Toast.show({
-        //   type: "error",
-        //   text1: error.response.data.message,
-        //   position: "bottom",
-        // });
-        // console.log(error.response);
+        Toast.show({
+          type: "error",
+          text1: error.response.data.message,
+          position: "bottom",
+        });
+        console.log(error.response);
       } else {
-        // Toast.show({
-        //   type: "error",
-        //   text1: "Internal Server Error",
-        //   position: "bottom",
-        // });
+        Toast.show({
+          type: "error",
+          text1: "Internal Server Error",
+          position: "bottom",
+        });
         console.log("error 2");
       }
     }
@@ -479,7 +473,7 @@ const RegistrationScreen = ({ navigation }) => {
                 errorMessage={country.error}
               />
               <TextInputField
-                label="Google Map Link"
+                label="Google Map Shop Location Link"
                 placeholder="Enter Google Map link"
                 value={gMapLink.value}
                 onChangeText={handleGMapLinkChange}
@@ -557,7 +551,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
     alignItems: "center",
-    marginVertical: 15,
   },
   buttonText: {
     fontSize: 18,

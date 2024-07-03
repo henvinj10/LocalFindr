@@ -9,31 +9,51 @@ import {
   Alert,
   BackHandler,
 } from "react-native";
-import Animated, {
-  FadeIn,
-  FadeOut,
-} from "react-native-reanimated";
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { SelectList } from "react-native-dropdown-select-list";
 import colors from "../constants/Colors";
 import TextInputField from "../components/TextInputField";
 import { isEmpty } from "../utils/Validations";
 import SearchScreen from "./SearchScreen";
-import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useFocusEffect } from "@react-navigation/native";
 
 const UserHomeScreen = ({ navigation }) => {
-  const [selectedSection, setSelectedSection] = useState({ value: "" });
-  const [search, setsearch] = useState({ value: "", valid: false, error: null });
-  const [localBody, setlocalBody] = useState({ value: "", valid: false, error: null });
-  const [results, setShowResults] = useState(false);
+  const [valid, setValid] = useState(false);
+  const [selectedSection, setSelectedSection] = useState({ value: "ALL" });
+  const [search, setSearch] = useState({
+    value: "",
+    valid: false,
+    error: null,
+  });
+  const [localBody, setLocalBody] = useState({
+    value: "",
+    valid: false,
+    error: null,
+  });
+  const [city, setCity] = useState({ value: "", valid: false, error: null });
+  const [street, setStreet] = useState({
+    value: "",
+    valid: false,
+    error: null,
+  });
+  const [price, setPrice] = useState({
+    value: null,
+    valid: false,
+    error: null,
+  });
+  const [category, setCategory] = useState({
+    value: "",
+    valid: false,
+    error: null,
+  });
   const [data, setData] = useState(null);
 
   const sections = [
-    { key: "1", value: "Product" },
-    { key: "2", value: "Service" },
-    { key: "3", value: "All" },
+    { key: "1", value: "PRODUCT" },
+    { key: "2", value: "SERVICE" },
+    { key: "3", value: "ALL" },
   ];
 
   useFocusEffect(
@@ -46,29 +66,85 @@ const UserHomeScreen = ({ navigation }) => {
 
         BackHandler.addEventListener("hardwareBackPress", onBackPress);
 
-        return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+        return () =>
+          BackHandler.removeEventListener("hardwareBackPress", onBackPress);
       }
     }, [data])
   );
 
   const handleSectionSelect = (val) => {
-    setSelectedSection({ value: val.toUpperCase() });
+    setSelectedSection({ value: val });
   };
 
-  const handlesearchChange = (text) => {
+  const handleInputChange = (setter) => (text) => {
     if (isEmpty(text)) {
-      setsearch({ value: text, valid: false, error: "Please enter a valid search" });
+      setter({
+        value: text,
+        valid: false,
+        error: "Please enter a valid input",
+      });
       return;
     }
-    setsearch({ value: text, valid: true, error: null });
+    setter({ value: text, valid: true, error: null });
   };
 
-  const handlelocalBodyChange = (text) => {
-    if (isEmpty(text)) {
-      setlocalBody({ value: text, valid: false, error: "Please enter a valid search" });
-      return;
+  const fetchResults = () => {
+    // if (selectedSection.value && search.valid && localBody.valid) {
+    //   console.log(
+    //     `Searching for ${search.value} ${selectedSection.value} in ${localBody.value} `
+    //   );
+    fetchData();
+    // } else {
+    //   Alert.alert(
+    //     "Fill Fields",
+    //     "Give at least search term, select a section and locality"
+    //   );
+    // }
+  };
+
+  const fetchData = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+
+      // Check if at least one field is filled
+      if (
+        !search.value &&
+        !category.value &&
+        !price.value &&
+        !street.value &&
+        !localBody.value &&
+        !city.value
+      ) {
+        Alert.alert("Validation Error", "Please fill at least one field");
+        return;
+      } else {
+      }
+
+      const response = await axios.post(
+        "http://10.4.6.44:8080/customer/search",
+        {
+          type: selectedSection.value === "ALL" ? null : selectedSection.value,
+          name: search.value,
+          category: category.value || null,
+          price: price.value || null,
+          streetName: street.value || null,
+          localBody: localBody.value || null,
+          city: city.value || null,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setSelectedSection({ value: "ALL" });
+      setData(response.data);
+    } catch (error) {
+      Alert.alert("Error", "Something went wrong while fetching data");
+      console.error("Fetch Error:", error);
     }
-    setlocalBody({ value: text, valid: true, error: null });
   };
 
   if (data) {
@@ -79,43 +155,10 @@ const UserHomeScreen = ({ navigation }) => {
         exiting={FadeOut.duration(400)}
         style={{ flex: 1, height: "100%" }}
       >
-        <SearchScreen data={data} isfavorite={true} icon={true} />
+        <SearchScreen data={data} isFavorite={true} icon={true} />
       </Animated.View>
     );
   }
-
-  const fetchData = async () => {
-    try {
-      // Retrieve token from AsyncStorage
-      const token = await AsyncStorage.getItem("token");
-      console.log("Token:", token);
-
-      const response = await axios.post("http://10.4.6.44:8080/customer/search", {
-        type: selectedSection.value,
-        name: search.value,
-        category: null,
-        price: 3000000,
-        streetName: null,
-        localBody: null,
-        city: null
-      }, {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-      });
-
-      console.log("Response status:", response.status);
-
-      const result = response.data;
-
-      console.log("Data fetched successfully:", result);
-      setData(result);
-    } catch (error) {
-      Alert.alert("Error", "Something went wrong while fetching data");
-      console.error("Fetch Error:", error);
-    }
-  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -123,17 +166,49 @@ const UserHomeScreen = ({ navigation }) => {
       <View style={styles.form}>
         <TextInputField
           value={search.value}
-          onChangeText={handlesearchChange}
+          onChangeText={handleInputChange(setSearch)}
           placeholder="Search Term"
           error={search.error}
           autoCapitalize="none"
           keyboardType="default"
         />
         <TextInputField
+          value={price.value}
+          onChangeText={handleInputChange(setPrice)}
+          placeholder="Enter Maximum Price"
+          error={price.error}
+          autoCapitalize="none"
+          keyboardType="number-pad"
+        />
+        <TextInputField
           value={localBody.value}
-          onChangeText={handlelocalBodyChange}
+          onChangeText={handleInputChange(setLocalBody)}
           placeholder="Locality"
           error={localBody.error}
+          autoCapitalize="none"
+          keyboardType="default"
+        />
+        <TextInputField
+          value={street.value}
+          onChangeText={handleInputChange(setStreet)}
+          placeholder="Street Name"
+          error={street.error}
+          autoCapitalize="none"
+          keyboardType="default"
+        />
+        <TextInputField
+          value={city.value}
+          onChangeText={handleInputChange(setCity)}
+          placeholder="City"
+          error={city.error}
+          autoCapitalize="none"
+          keyboardType="default"
+        />
+        <TextInputField
+          value={category.value}
+          onChangeText={handleInputChange(setCategory)}
+          placeholder="Search Category"
+          error={category.error}
           autoCapitalize="none"
           keyboardType="default"
         />
@@ -142,19 +217,23 @@ const UserHomeScreen = ({ navigation }) => {
             setSelected={handleSectionSelect}
             data={sections}
             save="value"
-            placeholder="Choose a section"
+            placeholder="Choose a section - Default is ALL"
           />
         </View>
       </View>
-      {selectedSection.value && search.value && localBody.value && (
+      {(search.value ||
+        category.value ||
+        price.value ||
+        street.value ||
+        localBody.value ||
+        city.value) && (
         <Animated.View
           key={"uniqueKey"}
           entering={FadeIn.duration(2000)}
           exiting={FadeOut.duration(400)}
           style={styles.appDrawerIcon}
         >
-          {/* <Pressable onPress={() => setShowResults(!results)}> */}
-          <Pressable onPress={fetchData}>
+          <Pressable onPress={fetchResults}>
             <Image
               source={require("../assets/search.png")}
               style={styles.appDrawerIcon}
