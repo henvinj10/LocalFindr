@@ -18,7 +18,7 @@ public interface UpdateItemRepository extends JpaRepository<OfferingEntity, Long
             "o.offeringType = COALESCE(:#{#offeringEntity.offeringType}, o.offeringType), " +
             "o.category = COALESCE(:#{#offeringEntity.category}, o.category), " +
             "o.description = COALESCE(:#{#offeringEntity.description}, o.description), " +
-            "o.price = COALESCE(:#{#offeringEntity.price}, o.price), " +
+            "o.price = COALESCE(NULLIF(:#{#offeringEntity.price}, 0), o.price), " +
             "o.image = COALESCE(:#{#offeringEntity.image}, o.image), " +
             "o.isAvailable = COALESCE(:#{#offeringEntity.isAvailable}, o.isAvailable), " +
             "o.availableTime = COALESCE(:#{#offeringEntity.availableTime}, o.availableTime) " +
