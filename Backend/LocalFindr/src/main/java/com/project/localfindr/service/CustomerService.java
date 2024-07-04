@@ -34,20 +34,21 @@ public class CustomerService {
 
     public List<SearchResponseDTO> search(HttpServletRequest request, SearchDTO searchDTO) {
         // Fetch data from the database based on search criteria
-        Double price;
-        if(searchDTO.getPrice() == 0.0){
-            price = null;
-        }else{
-            price = searchDTO.getPrice();
-        }
+        Double price = searchDTO.getPrice() == 0.0 ? null : searchDTO.getPrice();
+        String name = (searchDTO.getName() != null && !searchDTO.getName().trim().isEmpty()) ? searchDTO.getName().trim().toLowerCase() : null;
+        String category = (searchDTO.getCategory() != null && !searchDTO.getCategory().trim().isEmpty()) ? searchDTO.getCategory().trim().toLowerCase() : null;
+        String streetName = (searchDTO.getStreetName() != null && !searchDTO.getStreetName().trim().isEmpty()) ? searchDTO.getStreetName().trim().toLowerCase() : null;
+        String localBody = (searchDTO.getLocalBody() != null && !searchDTO.getLocalBody().trim().isEmpty()) ? searchDTO.getLocalBody().trim().toLowerCase() : null;
+        String city = (searchDTO.getCity() != null && !searchDTO.getCity().trim().isEmpty()) ? searchDTO.getCity().trim().toLowerCase() : null;
+
         List<OfferingEntity> offerings = offeringRepository.findByCriteria(
-                searchDTO.getName(),
+                name,
                 searchDTO.getType(),
-                searchDTO.getCategory(),
+                category,
                 price,
-                searchDTO.getStreetName(),
-                searchDTO.getLocalBody(),
-                searchDTO.getCity()
+                streetName,
+                localBody,
+                city
         );
 
         // Map the offerings to SearchResponseDTO
