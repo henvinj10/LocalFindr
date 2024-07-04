@@ -19,6 +19,6 @@ public interface OfferingRepository extends JpaRepository<OfferingEntity, Long> 
             "(?4 IS NULL OR o.price <= ?4) AND " +
             "(?5 IS NULL OR a.streetName ILIKE %?5%) AND " +
             "(?6 IS NULL OR a.localBody ILIKE %?6%) AND " +
-            "(?7 IS NULL OR a.city LIKE %?7%)")
+            "(?7 IS NULL OR a.city ILIKE %?7%)")
     List<OfferingEntity> findByCriteria(String name, OfferingType type, String category, Double price, String streetName, String localBody, String city);
 }
