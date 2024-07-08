@@ -166,7 +166,7 @@ const ProductDetailsScreen = () => {
         <View style={styles.contentContainer}>
           <View style={styles.textContainer}>
             <Text style={styles.fontText}>{product.name}</Text>
-            <Text style={styles.fontText}>${product.price}</Text>
+            <Text style={styles.fontText}>₹{product.price}</Text>
           </View>
           <View style={styles.attributeContainer}>
             <Text style={[styles.fontText, styles.attributeText]}>

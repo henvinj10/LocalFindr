@@ -111,10 +111,10 @@ const UploadProductScreen = ({ update }) => {
           `http://10.4.6.44:8080/vendor/update`,
           {
             offeringID: update.offeringID,
-            name: name,
-            category: category,
-            price: parseFloat(price), // Ensure price is sent as a number
-            type: selectedSection.value,
+            name: name || null,
+            category: category || null,
+            price: parseFloat(price) || null, // Ensure price is sent as a number
+            type: selectedSection.value || null,
             description: description || null,
             available: true,
             availableTime: availableTime || null,

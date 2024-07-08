@@ -8,7 +8,7 @@ const ResultItem = ({ item, onPress }) => {
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{item.name}</Text>
         <Text style={styles.category}>{item.category}</Text>
-        <Text style={styles.price}>${item.price}</Text>
+        <Text style={styles.price}>₹{item.price}</Text>
       </View>
     </TouchableOpacity>
   );

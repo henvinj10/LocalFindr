@@ -130,6 +130,7 @@ const ProductCard = ({ item, isFavorite, icon }) => {
 
   const handlePressNotAvailable = () => {
     // Logic when item is not available
+    console.log(isFavorite)
   };
 
   return (
@@ -143,7 +144,7 @@ const ProductCard = ({ item, isFavorite, icon }) => {
       />
       <View style={styles.contentContainer}>
         <Text style={styles.title}>{item.name}</Text>
-        <Text style={styles.price}>${item.price}</Text>
+        <Text style={styles.price}>₹{item.price}</Text>
       </View>
       {icon && (
         <View style={styles.likeContainer}>
@@ -163,8 +164,8 @@ const ProductCard = ({ item, isFavorite, icon }) => {
               ? "Available"
               : "Make Unavailable"
             : isFavorite
-            ? "Unavailable"
-            : "Make Available"
+              ? "Unavailable"
+              : "Make Available"
         }
         handlePress={
           icon === false ? handlePressAvailable : handlePressNotAvailable
