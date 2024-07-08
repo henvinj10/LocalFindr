@@ -108,12 +108,12 @@ const UserHomeScreen = ({ navigation }) => {
 
       // Check if at least one field is filled
       if (
-        !search.value &&
-        !category.value &&
+        !search.value.trim() &&
+        !category.value.trim() &&
         !price.value &&
-        !street.value &&
-        !localBody.value &&
-        !city.value
+        !street.value.trim() &&
+        !localBody.value.trim() &&
+        !city.value.trim()
       ) {
         Alert.alert("Validation Error", "Please fill at least one field");
         return;
@@ -227,20 +227,20 @@ const UserHomeScreen = ({ navigation }) => {
         street.value ||
         localBody.value ||
         city.value) && (
-        <Animated.View
-          key={"uniqueKey"}
-          entering={FadeIn.duration(2000)}
-          exiting={FadeOut.duration(400)}
-          style={styles.appDrawerIcon}
-        >
-          <Pressable onPress={fetchResults}>
-            <Image
-              source={require("../assets/search.png")}
-              style={styles.appDrawerIcon}
-            />
-          </Pressable>
-        </Animated.View>
-      )}
+          <Animated.View
+            key={"uniqueKey"}
+            entering={FadeIn.duration(2000)}
+            exiting={FadeOut.duration(400)}
+            style={styles.appDrawerIcon}
+          >
+            <Pressable onPress={fetchResults}>
+              <Image
+                source={require("../assets/search.png")}
+                style={styles.appDrawerIcon}
+              />
+            </Pressable>
+          </Animated.View>
+        )}
     </ScrollView>
   );
 };
