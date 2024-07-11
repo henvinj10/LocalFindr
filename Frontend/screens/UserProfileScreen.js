@@ -95,7 +95,7 @@ const UserData = ({ navigation }) => {
         exiting={FadeOut.duration(400)}
         style={{ flex: 1, height: "100%" }}
       >
-        <SearchScreen data={data} isFavorite={false} icon={true} />
+        <SearchScreen data={data} isFavorite={true} icon={true} />
       </Animated.View>
     );
   }

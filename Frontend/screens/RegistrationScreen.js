@@ -163,7 +163,7 @@ const RegistrationScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    console.log(userType);
+    // console.log(userType);
   }, [userType]);
 
   handleBuildingInfoChange = (text) => {
@@ -263,8 +263,8 @@ const RegistrationScreen = ({ navigation }) => {
   };
 
   handleRegister = () => {
-    console.log(email.value);
-    console.log(userType.value);
+    // console.log(email.value);
+    // console.log(userType.value);
     if (email.valid && password.valid && userType.value === "CUSTOMER") {
       registerCustomer();
     } else if (
@@ -279,7 +279,7 @@ const RegistrationScreen = ({ navigation }) => {
       country.valid &&
       gMapLink.valid
     ) {
-      console.log("Vendor registration");
+      // console.log("Vendor registration");
       registerVendor();
     } else {
       Alert.alert("Incorrect data", "Please check your inputs");
@@ -311,14 +311,14 @@ const RegistrationScreen = ({ navigation }) => {
           text1: error.response.data.message,
           position: "bottom",
         });
-        console.log(error.response);
+        // console.log(error.response);
       } else {
         Toast.show({
           type: "error",
           text1: "Internal Server Error",
           position: "bottom",
         });
-        console.log("error 2");
+        // console.log("error 2");
       }
     }
   };
@@ -357,14 +357,14 @@ const RegistrationScreen = ({ navigation }) => {
           text1: error.response.data.message,
           position: "bottom",
         });
-        console.log(error.response);
+        // console.log(error.response);
       } else {
         Toast.show({
           type: "error",
           text1: "Internal Server Error",
           position: "bottom",
         });
-        console.log("error 2");
+        // console.log("error 2");
       }
     }
   };
